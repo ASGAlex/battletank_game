@@ -21,7 +21,6 @@ class MyGameController implements GameListener {
 
   void addEnemy(Vector2 position) {
     game?.add(tank.Enemy(
-      gameController: this,
       position: position,
     ));
   }

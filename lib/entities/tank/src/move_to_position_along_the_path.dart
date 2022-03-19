@@ -48,7 +48,6 @@ mixin _MoveToPositionAlongThePath on Movement, ObjectCollision {
   }) async {
     if (_calculating) return;
     _calculating = true;
-    print('calc! ${currentPath.length}');
     this.ignoreCollisions.clear();
     this.ignoreCollisions.add(this);
     if (ignoreCollisions != null) {
@@ -57,9 +56,7 @@ mixin _MoveToPositionAlongThePath on Movement, ObjectCollision {
 
     currentIndex = 0;
     var player = this;
-    final positionPlayer = player is ObjectCollision
-        ? (player as ObjectCollision).rectCollision.center.toVector2()
-        : player.center;
+    final positionPlayer = player.rectCollision.center.toVector2();
 
     final parameters = PathFindingParameters.fromObjectCollision(
         ignoreCollisions: this.ignoreCollisions,
@@ -99,10 +96,7 @@ mixin _MoveToPositionAlongThePath on Movement, ObjectCollision {
 
   void _move(double dt) {
     double innerSpeed = speed * dt;
-    Vector2 center = this.center;
-    if (isObjectCollision()) {
-      center = (this as ObjectCollision).rectCollision.center.toVector2();
-    }
+
     var currentOffset = currentPath[currentIndex];
 
     double diffX = currentOffset.dx - center.x;
@@ -144,8 +138,8 @@ mixin _MoveToPositionAlongThePath on Movement, ObjectCollision {
     if (_gridSizeIsCollisionSize) {
       if (isObjectCollision()) {
         return max(
-          (this as ObjectCollision).rectCollision.width,
-          (this as ObjectCollision).rectCollision.height,
+          rectCollision.width,
+          rectCollision.height,
         );
       }
       return max(height, width) + REDUCTION_TO_AVOID_ROUNDING_PROBLEMS;

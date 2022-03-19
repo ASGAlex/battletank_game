@@ -2,10 +2,10 @@ part of tank;
 
 class Enemy extends RotationEnemy
     with _BaseTankMix, ObjectCollision, _MoveToPositionAlongThePath {
-  Enemy({required Vector2 position, this.gameController})
+  Enemy({required Vector2 position})
       : super(
             position: position,
-            speed: 16 * 2,
+            speed: defaultSpeed,
             life: 1,
             size: SpriteSheetRegistry().tankBasic.spriteSize,
             animIdle: SpriteSheetRegistry().tankBasic.animationIdle,
@@ -14,45 +14,50 @@ class Enemy extends RotationEnemy
     setupMoveToPositionAlongThePath(showBarriersCalculated: true);
   }
 
+  static const sizePx = 16.0;
+  static const visionRadius = sizePx * 10;
+  static const defaultSpeed = sizePx * 2;
+
   @override
   AttackFromEnum get myRole => AttackFromEnum.ENEMY;
 
-  bool updatePath = true;
+  bool _updatePath = true;
   bool _updateScheduled = false;
 
-  Vector2? movementCorrection;
+  Vector2? _movementCorrection;
 
-  Vector2? lastTargetPosition;
+  Vector2? _lastTargetPosition;
+  bool _targetedMovement = false;
 
   Direction _fireDirection = Direction.up;
-
-  MyGameController? gameController;
 
   @override
   void update(double dt) {
     super.update(dt);
 
-    if (movementCorrection != null) {
-      position = movementCorrection!;
-      movementCorrection = null;
+    if (_movementCorrection != null) {
+      position = _movementCorrection!;
+      _movementCorrection = null;
     } else {
       seePlayer(
         notObserved: onPlayerNotObserved,
         observed: onPlayerIsObserved,
-        radiusVision: 16 * 100,
+        radiusVision: visionRadius,
       );
     }
   }
 
   void onPlayerNotObserved() {
-    if (lastTargetPosition != null) {
-      _moveToTarget(lastTargetPosition!);
+    if (_lastTargetPosition != null) {
+      _moveToTarget(_lastTargetPosition!);
+    } else {
+      _moveRandom();
     }
   }
 
   void onPlayerIsObserved(bonfire.Player player) {
-    lastTargetPosition = gameRef.player!.position + (gameRef.player!.size / 2);
-    _moveToTarget(lastTargetPosition!);
+    _lastTargetPosition = gameRef.player!.position + (gameRef.player!.size / 2);
+    _moveToTarget(_lastTargetPosition!, force: !_targetedMovement);
 
     if (_shouldFireTo(player)) {
       fire();
@@ -66,19 +71,19 @@ class Enemy extends RotationEnemy
     switch (_fireDirection) {
       case Direction.left:
         lineOfVision = Rect.fromPoints(position.toOffset(),
-            position.toOffset() + const Offset(-16 * 100, 16));
+            position.toOffset() + const Offset(-visionRadius, 16));
         break;
       case Direction.right:
         lineOfVision = Rect.fromPoints(position.toOffset(),
-            position.toOffset() + const Offset(16 * 100, 16));
+            position.toOffset() + const Offset(visionRadius, sizePx));
         break;
       case Direction.up:
         lineOfVision = Rect.fromPoints(position.toOffset(),
-            position.toOffset() + const Offset(16, -16 * 100));
+            position.toOffset() + const Offset(sizePx, -visionRadius));
         break;
       case Direction.down:
         lineOfVision = Rect.fromPoints(position.toOffset(),
-            position.toOffset() + const Offset(16, 16 * 100));
+            position.toOffset() + const Offset(sizePx, visionRadius));
         break;
       case Direction.upLeft:
       case Direction.upRight:
@@ -90,9 +95,9 @@ class Enemy extends RotationEnemy
     return lineOfVision?.overlaps(getRectAndCollision(gameRef.player)) ?? false;
   }
 
-  void _moveToTarget(Vector2 targetPosition, [var force = false]) {
-    if (updatePath || force) {
-      updatePath = false;
+  void _moveToTarget(Vector2 targetPosition, {var force = false}) {
+    if (_updatePath || force) {
+      _updatePath = false;
       final ignoreCollisionsWith = <ObjectCollision>[];
       ignoreCollisionsWith.add(gameRef.player as ObjectCollision);
       for (var element in myBullets) {
@@ -102,11 +107,28 @@ class Enemy extends RotationEnemy
           ignoreCollisions: ignoreCollisionsWith);
       if (!_updateScheduled) {
         Future.delayed(const Duration(milliseconds: 1500)).then((_) {
-          updatePath = true;
+          _updatePath = true;
           _updateScheduled = false;
         });
       }
     }
+    if (isIdle &&
+        _lastTargetPosition != null &&
+        _lastTargetPosition!.distanceTo(position) < sizePx) {
+      _lastTargetPosition = null;
+    }
+  }
+
+  void _moveRandom() {
+    if (!isIdle) return;
+    _targetedMovement = false;
+    final random = Random();
+    final randX = visionRadius - random.nextInt(visionRadius.toInt() * 2);
+    final randy = visionRadius - random.nextInt(visionRadius.toInt() * 2);
+    final targetPosition = position.translate(randX, randy);
+
+    print('My position: $position; new position: $targetPosition');
+    _moveToTarget(targetPosition);
   }
 
   /// Added to perform rotation calculations
@@ -129,7 +151,7 @@ class Enemy extends RotationEnemy
       if (vector.y.abs() > limit) {
         vector.y = limit * (vector.y > 0 ? 1 : -1);
       }
-      movementCorrection = position.translate(vector.x, vector.y);
+      _movementCorrection = position.translate(vector.x, vector.y);
     }
     return super.onCollision(component, active);
   }
@@ -155,7 +177,7 @@ class Enemy extends RotationEnemy
       ),
     );
     Future.delayed(const Duration(milliseconds: 1500)).then((_) {
-      gameController?.addEnemy(Vector2(46 * 8, 46 * 8));
+      MyGameController().addEnemy(Vector2(46 * 8, 46 * 8));
     });
 
     if (!shouldRemove) {

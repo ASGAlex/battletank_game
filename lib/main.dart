@@ -68,7 +68,7 @@ class MainGame extends StatelessWidget {
       onReady: (game) {
         game.camera.snapTo(Vector2(46 * 8, 46 * 8));
         _controller.init(game);
-        // _controller.addEnemy(Vector2(46 * 8, 46 * 8));
+        _controller.addEnemy(Vector2(46 * 8, 46 * 8));
       },
       colorFilter: GameColorFilter(),
     );
