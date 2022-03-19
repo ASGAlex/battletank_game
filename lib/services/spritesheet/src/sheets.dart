@@ -78,8 +78,9 @@ class _Bullet extends _SpriteSheetBase {
 
 class _Ground extends _SpriteSheetBase {
   _Ground() : super() {
-    compileAnimation(name: 'dirt', stepTime: 1, from: 1, to: 2);
     compileAnimation(name: 'grass', stepTime: 1, from: 0, to: 1);
+    compileAnimation(name: 'dirt', stepTime: 1, from: 1, to: 2);
+    compileAnimation(name: 'ash', stepTime: 1, from: 2, to: 3);
   }
 
   @override
@@ -93,4 +94,7 @@ class _Ground extends _SpriteSheetBase {
 
   Future<Sprite> get grass => getPrecompiledAnimation('grass')
       .then((value) => value.frames.first.sprite);
+
+  Future<Sprite> get ash =>
+      getPrecompiledAnimation('ash').then((value) => value.frames.first.sprite);
 }

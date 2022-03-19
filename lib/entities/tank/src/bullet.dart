@@ -1,6 +1,8 @@
 part of tank;
 
-class _Bullet extends FlyingAttackObject {
+abstract class BulletInterface {}
+
+class _Bullet extends FlyingAttackObject implements BulletInterface {
   _Bullet._byAngle(
       {required Vector2 position,
       required Vector2 size,
@@ -91,13 +93,6 @@ class _Bullet extends FlyingAttackObject {
     if (component == firedFrom) return false;
     bool allowBullet = component.properties?['allowBullet'] == true;
     if (allowBullet) return false;
-    if (component is TileWithCollision) {
-      final hit = _collideWithWalls(component);
-      if (hit) {
-        _die();
-        return true;
-      }
-    }
 
     if (component is Attackable && !component.shouldRemove) {
       if (attackFrom == AttackFromEnum.ENEMY) {
@@ -115,50 +110,6 @@ class _Bullet extends FlyingAttackObject {
       return false;
     }
     _die();
-    return true;
-  }
-
-  bool _collideWithWalls(TileWithCollision wall) {
-    int brickHealth = wall.properties?['brickHealth'] ?? 100000;
-    if (brickHealth - damage <= 0) {
-      final vector = wall.center - center;
-      if (vector.x > 0) {
-        if (vector.x.abs() > vector.y.abs()) {
-          //left
-          wall.position.x += 4;
-          wall.size.x -= 4;
-        } else {
-          if (vector.y > 0) {
-            //up
-            wall.position.y += 4;
-            wall.size.y -= 4;
-          } else {
-            //down
-            wall.size.y -= 4;
-          }
-        }
-      } else {
-        if (vector.x.abs() > vector.y.abs()) {
-          //right
-          wall.size.x -= 4;
-        } else {
-          if (vector.y > 0) {
-            //up
-            wall.position.y += 4;
-            wall.size.y -= 4;
-          } else {
-            //downs
-            wall.size.y -= 4;
-          }
-        }
-      }
-      if (wall.size.x <= 3 || wall.size.y <= 3) {
-        wall.removeFromParent();
-      } else {
-        wall.setupCollision(CollisionConfig(
-            collisions: [CollisionArea.rectangle(size: wall.size)]));
-      }
-    }
     return true;
   }
 

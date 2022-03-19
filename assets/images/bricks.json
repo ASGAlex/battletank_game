@@ -38,8 +38,13 @@
                  "name":"brickHealth",
                  "type":"int",
                  "value":1
+                }, 
+                {
+                 "name":"name",
+                 "type":"string",
+                 "value":"brick"
                 }],
-         "type":"collision"
+         "type":"brick"
         }, 
         {
          "id":1,

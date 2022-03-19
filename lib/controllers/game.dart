@@ -12,10 +12,10 @@ class MyGameController implements GameListener {
 
   MyGameController._internal();
 
-  Component? game;
+  BonfireGame? game;
   bool needNewEnemies = true;
 
-  init(Component game) {
+  init(BonfireGame game) {
     this.game = game;
   }
 
@@ -26,13 +26,16 @@ class MyGameController implements GameListener {
     ));
   }
 
-  void addGround(Vector2 position) {
+  void addGroundAsh(Vector2 position, Vector2 size) {
     final registry = SpriteSheetRegistry();
-    game?.add(Tile.fromFutureSprite(
-      sprite: registry.ground.dirt,
+    final tile = Tile.fromFutureSprite(
+      sprite: registry.ground.ash,
       position: position,
-      size: registry.ground.spriteSize,
-    ));
+      bleedingPixel: false,
+      size: size,
+    );
+    tile.belowComponents = true;
+    game?.add(tile);
   }
 
   @override

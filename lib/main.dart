@@ -4,6 +4,7 @@ import 'package:game/entities/tank/tank.dart' as tank;
 import 'package:game/services/spritesheet/spritesheet.dart';
 
 import 'controllers/game.dart';
+import 'entities/environment/brick.dart';
 import 'ui/joystick.dart';
 
 void main() async {
@@ -28,13 +29,14 @@ class MainGame extends StatelessWidget {
       gameController: _notificator..addListener(_controller),
       joystick: MyJoystick(),
       // required
-      map: TiledWorldMap(
-        'mapnew.json',
-        // objectsBuilder: {
-        //   'player_spawn' => ,
-        //   'npc_spawn' => ,
-        // }
-      ),
+      map: TiledWorldMap('mapnew.json', tileBuilder: {
+        'brick': (props, position, offset) {
+          return Brick(
+              sprite: props.sprite!.getSprite(),
+              position: position,
+              collisions: props.collisions);
+        },
+      }),
       // required
       player: player,
       // If player is omitted, the joystick directional will control the map view, being very useful in the process of building maps
@@ -66,7 +68,7 @@ class MainGame extends StatelessWidget {
       onReady: (game) {
         game.camera.snapTo(Vector2(46 * 8, 46 * 8));
         _controller.init(game);
-        _controller.addEnemy(Vector2(46 * 8, 46 * 8));
+        // _controller.addEnemy(Vector2(46 * 8, 46 * 8));
       },
       colorFilter: GameColorFilter(),
     );
