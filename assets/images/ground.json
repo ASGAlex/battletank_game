@@ -1,0 +1,22 @@
+{ "columns":2,
+ "image":"ground_tiles.png",
+ "imageheight":8,
+ "imagewidth":16,
+ "margin":0,
+ "name":"ground",
+ "spacing":0,
+ "tilecount":2,
+ "tiledversion":"1.8.1",
+ "tileheight":8,
+ "tilewidth":8,
+ "type":"tileset",
+ "version":"1.8",
+ "wangsets":[
+        {
+         "colors":[],
+         "name":"\u0411\u0435\u0437\u044b\u043c\u044f\u043d\u043d\u044b\u0439 \u043d\u0430\u0431\u043e\u0440",
+         "tile":-1,
+         "type":"edge",
+         "wangtiles":[]
+        }]
+}

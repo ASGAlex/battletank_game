@@ -1,0 +1,187 @@
+part of tank;
+
+class _Bullet extends FlyingAttackObject {
+  _Bullet._byAngle(
+      {required Vector2 position,
+      required Vector2 size,
+      required Future<SpriteAnimation> flyAnimation,
+      required double angle,
+      dynamic id,
+      Future<SpriteAnimation>? animationDestroy,
+      Vector2? destroySize,
+      double speed = 150,
+      double damage = 1,
+      AttackFromEnum attackFrom = AttackFromEnum.ENEMY,
+      bool withDecorationCollision = true,
+      VoidCallback? onDestroy,
+      LightingConfig? lightingConfig,
+      CollisionConfig? collision,
+      required this.firedFrom})
+      : super.byAngle(
+            id: id,
+            position: position,
+            size: size,
+            angle: angle,
+            damage: damage,
+            speed: speed,
+            attackFrom: attackFrom,
+            collision: collision,
+            withDecorationCollision: withDecorationCollision,
+            onDestroy: onDestroy,
+            destroySize: destroySize,
+            flyAnimation: flyAnimation,
+            animationDestroy: animationDestroy,
+            lightingConfig: lightingConfig,
+            enabledDiagonal: false);
+
+  factory _Bullet({
+    required Vector2 position,
+    required AttackFromEnum attackFrom,
+    required double angle,
+    required GameComponent firedFrom,
+    dynamic id,
+    VoidCallback? onDestroy,
+    double speed = 150,
+    double damage = 1,
+  }) {
+    final spriteSheetRegistry = SpriteSheetRegistry();
+    final bulletSize = spriteSheetRegistry.bullet.spriteSize;
+    final auraRadius = bulletSize.x;
+
+    Vector2 startPosition = position;
+
+    double displacement = max(spriteSheetRegistry.tankBasic.spriteSize.x / 2,
+        spriteSheetRegistry.tankBasic.spriteSize.y / 2);
+    double nextX = displacement * cos(angle);
+    double nextY = displacement * sin(angle);
+
+    Vector2 diffBase = Vector2(nextX, nextY);
+
+    startPosition.add(diffBase);
+    startPosition.add(Vector2(-bulletSize.x / 2, -bulletSize.y / 2));
+
+    return _Bullet._byAngle(
+      angle: angle,
+      id: id,
+      firedFrom: firedFrom,
+      position: startPosition,
+      onDestroy: onDestroy,
+      speed: speed,
+      damage: damage,
+      attackFrom: attackFrom,
+      flyAnimation: spriteSheetRegistry.bullet.animation,
+      animationDestroy: spriteSheetRegistry.boom.animation,
+      destroySize: spriteSheetRegistry.boom.spriteSize,
+      size: bulletSize,
+      collision: CollisionConfig(
+          collisions: [CollisionArea.rectangle(size: bulletSize)]),
+      lightingConfig: LightingConfig(
+        radius: auraRadius / 2,
+        blurBorder: auraRadius,
+        color: Colors.orange.withOpacity(0.3),
+      ),
+    );
+  }
+
+  final GameComponent firedFrom;
+
+  /// Fix error when fired bullet instantly destroys, collided with parent tank
+  @override
+  bool onCollision(GameComponent component, bool active) {
+    if (component == firedFrom) return false;
+    bool allowBullet = component.properties?['allowBullet'] == true;
+    if (allowBullet) return false;
+    if (component is TileWithCollision) {
+      final hit = _collideWithWalls(component);
+      if (hit) {
+        _die();
+        return true;
+      }
+    }
+
+    if (component is Attackable && !component.shouldRemove) {
+      if (attackFrom == AttackFromEnum.ENEMY) {
+        if (component.receivesAttackFrom == ReceivesAttackFromEnum.ALL ||
+            component.receivesAttackFrom == ReceivesAttackFromEnum.ENEMY) {
+          component.receiveDamage(damage, id);
+        }
+      } else if (attackFrom == AttackFromEnum.PLAYER) {
+        if (component.receivesAttackFrom == ReceivesAttackFromEnum.ALL ||
+            component.receivesAttackFrom == ReceivesAttackFromEnum.PLAYER) {
+          component.receiveDamage(damage, id);
+        }
+      }
+    } else if (!withDecorationCollision) {
+      return false;
+    }
+    _die();
+    return true;
+  }
+
+  bool _collideWithWalls(TileWithCollision wall) {
+    int brickHealth = wall.properties?['brickHealth'] ?? 100000;
+    if (brickHealth - damage <= 0) {
+      final vector = wall.center - center;
+      if (vector.x > 0) {
+        if (vector.x.abs() > vector.y.abs()) {
+          //left
+          wall.position.x += 4;
+          wall.size.x -= 4;
+        } else {
+          if (vector.y > 0) {
+            //up
+            wall.position.y += 4;
+            wall.size.y -= 4;
+          } else {
+            //down
+            wall.size.y -= 4;
+          }
+        }
+      } else {
+        if (vector.x.abs() > vector.y.abs()) {
+          //right
+          wall.size.x -= 4;
+        } else {
+          if (vector.y > 0) {
+            //up
+            wall.position.y += 4;
+            wall.size.y -= 4;
+          } else {
+            //downs
+            wall.size.y -= 4;
+          }
+        }
+      }
+      if (wall.size.x <= 3 || wall.size.y <= 3) {
+        wall.removeFromParent();
+      } else {
+        wall.setupCollision(CollisionConfig(
+            collisions: [CollisionArea.rectangle(size: wall.size)]));
+      }
+    }
+    return true;
+  }
+
+  void _die() {
+    if (shouldRemove) return;
+    removeFromParent();
+    if (animationDestroy != null) {
+      final explosionSize = destroySize ?? size;
+      final positionDestroy =
+          center.translate(-explosionSize.x / 2, -explosionSize.y / 2);
+
+      if (hasGameRef) {
+        gameRef.add(
+          AnimatedObjectOnce(
+            animation: animationDestroy!,
+            position: positionDestroy,
+            lightingConfig: lightingConfig,
+            size: explosionSize,
+          ),
+        );
+      }
+    }
+    setupCollision(CollisionConfig(collisions: []));
+    onDestroy?.call();
+  }
+}
