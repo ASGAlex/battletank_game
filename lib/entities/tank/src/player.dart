@@ -158,13 +158,6 @@ class Player extends GameComponent
 
   @override
   bool onCollision(GameComponent component, bool active) {
-    if (component is Tree) {
-      _treeCollisions++;
-      if (_treeCollisions == 2) {
-        invisibleInTrees = true;
-      }
-      return false;
-    }
     if (component is _Bullet && component.firedFrom == this) return false;
 
     return super.onCollision(component, active);
@@ -177,11 +170,18 @@ class Player extends GameComponent
     double angle,
   ) {
     if (_treeCollisions < 2) {
-      Future.delayed(const Duration(milliseconds: 700)).then((value) {
+      Future.delayed(const Duration(seconds: 1)).then((value) {
         if (_treeCollisions < 2) {
           invisibleInTrees = false;
         }
       });
+    }
+  }
+
+  void contactWithTrees() {
+    _treeCollisions++;
+    if (_treeCollisions == 2) {
+      invisibleInTrees = true;
     }
   }
 

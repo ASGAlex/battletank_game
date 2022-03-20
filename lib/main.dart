@@ -1,4 +1,5 @@
 import 'package:bonfire/bonfire.dart';
+import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
 import 'package:game/entities/tank/tank.dart' as tank;
 import 'package:game/services/spritesheet/spritesheet.dart';

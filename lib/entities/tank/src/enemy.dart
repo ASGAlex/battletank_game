@@ -110,9 +110,6 @@ class Enemy extends RotationEnemy
       for (var element in myBullets) {
         ignoreCollisionsWith.add(element);
       }
-      for (var tree in Tree.trees) {
-        ignoreCollisionsWith.add(tree);
-      }
 
       moveToPositionAlongThePath(targetPosition,
           ignoreCollisions: ignoreCollisionsWith);
