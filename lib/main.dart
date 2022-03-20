@@ -2,6 +2,7 @@ import 'package:bonfire/bonfire.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
 import 'package:game/entities/tank/tank.dart' as tank;
+import 'package:game/services/game.dart';
 import 'package:game/services/spritesheet/spritesheet.dart';
 
 import 'controllers/game.dart';
@@ -28,6 +29,7 @@ class MainGame extends StatelessWidget {
     SpriteSheetRegistry(); //warm up entities
     final player = tank.Player(position: Vector2(30 * 8, 16 * 8));
     return BonfireTiledWidget(
+      customGameBuilder: TankGame.builder,
       gameController: _notificator..addListener(_controller),
       joystick: MyJoystick(),
       // required
