@@ -5,6 +5,7 @@ import 'package:game/services/spritesheet/spritesheet.dart';
 
 import 'controllers/game.dart';
 import 'entities/environment/brick.dart';
+import 'entities/environment/tree.dart';
 import 'ui/joystick.dart';
 
 void main() async {
@@ -30,12 +31,15 @@ class MainGame extends StatelessWidget {
       joystick: MyJoystick(),
       // required
       map: TiledWorldMap('mapnew.json', tileBuilder: {
-        'brick': (props, position, offset) {
-          return Brick(
-              sprite: props.sprite!.getSprite(),
-              position: position,
-              collisions: props.collisions);
-        },
+        'brick': (props, position, offset) => Brick(
+            sprite: props.sprite!.getSprite(),
+            position: position,
+            collisions: props.collisions),
+      }, decorationBuilder: {
+        'tree': (props, position, offset) => Tree(
+            sprite: props.sprite!.getFutureSprite(),
+            position: position,
+            collisions: props.collisions),
       }),
       // required
       player: player,

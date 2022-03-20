@@ -56,7 +56,14 @@ class Enemy extends RotationEnemy
   }
 
   void onPlayerIsObserved(bonfire.Player player) {
-    _lastTargetPosition = gameRef.player!.position + (gameRef.player!.size / 2);
+    if (player is Player &&
+        player.invisibleInTrees &&
+        player.position.distanceTo(position) > sizePx * 3) {
+      _moveRandom();
+      return;
+    }
+
+    _lastTargetPosition = player.position + (player.size / 2);
     _moveToTarget(_lastTargetPosition!, force: !_targetedMovement);
 
     if (_shouldFireTo(player)) {
@@ -103,6 +110,10 @@ class Enemy extends RotationEnemy
       for (var element in myBullets) {
         ignoreCollisionsWith.add(element);
       }
+      for (var tree in Tree.trees) {
+        ignoreCollisionsWith.add(tree);
+      }
+
       moveToPositionAlongThePath(targetPosition,
           ignoreCollisions: ignoreCollisionsWith);
       if (!_updateScheduled) {
@@ -122,13 +133,45 @@ class Enemy extends RotationEnemy
   void _moveRandom() {
     if (!isIdle) return;
     _targetedMovement = false;
-    final random = Random();
-    final randX = visionRadius - random.nextInt(visionRadius.toInt() * 2);
-    final randy = visionRadius - random.nextInt(visionRadius.toInt() * 2);
-    final targetPosition = position.translate(randX, randy);
+    var targetPosition = _getRandomTarget();
+    final mapSize = gameRef.map.mapSize;
+    if (mapSize == null) return;
 
-    print('My position: $position; new position: $targetPosition');
+    if (targetPosition.x >= mapSize.width - sizePx) {
+      targetPosition.x = mapSize.width - sizePx * 2;
+    }
+    if (targetPosition.x <= 0 + sizePx) {
+      targetPosition.x = sizePx * 2;
+    }
+    if (targetPosition.y >= mapSize.height - sizePx) {
+      targetPosition.y = mapSize.height - sizePx * 2;
+    }
+    if (targetPosition.y <= 0 + sizePx) {
+      targetPosition.y = sizePx * 2;
+    }
+
+    final allCollisions = gameRef.collisions();
+    var collision = false;
+    for (final i in allCollisions) {
+      collision = checkCollision(i, displacement: targetPosition);
+      if (collision) {
+        break;
+      }
+    }
+    if (collision) {
+      _moveRandom();
+      return;
+    }
+
     _moveToTarget(targetPosition);
+  }
+
+  Vector2 _getRandomTarget() {
+    final random = Random();
+    final randX = sizePx * 5 - random.nextInt(sizePx.toInt() * 5) * 2;
+    final randy = sizePx * 5 - random.nextInt(sizePx.toInt() * 5) * 2;
+    final targetPosition = position.translate(randX, randy);
+    return targetPosition;
   }
 
   /// Added to perform rotation calculations

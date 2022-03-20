@@ -80,7 +80,30 @@
         }, 
         {
          "id":3,
-         "type":"above"
+         "objectgroup":
+            {
+             "draworder":"index",
+             "id":2,
+             "name":"",
+             "objects":[
+                    {
+                     "height":4.06166932482722,
+                     "id":1,
+                     "name":"",
+                     "rotation":0,
+                     "type":"",
+                     "visible":true,
+                     "width":4.0829346092504,
+                     "x":1.95640616693248,
+                     "y":1.97767145135566
+                    }],
+             "opacity":1,
+             "type":"objectgroup",
+             "visible":true,
+             "x":0,
+             "y":0
+            },
+         "type":"tree"
         }, 
         {
          "id":4,

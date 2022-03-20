@@ -10,6 +10,7 @@ import 'package:game/services/spritesheet/spritesheet.dart';
 
 import '../../services/pathfinding/pathfinding.dart';
 import '../../ui/joystick.dart';
+import '../environment/tree.dart';
 
 part 'src/base.dart';
 part 'src/bullet.dart';

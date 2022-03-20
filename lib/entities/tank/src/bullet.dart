@@ -61,6 +61,9 @@ class _Bullet extends FlyingAttackObject implements BulletInterface {
 
     startPosition.add(diffBase);
     startPosition.add(Vector2(-bulletSize.x / 2, -bulletSize.y / 2));
+    final collisionConfig = CollisionConfig(
+        collisions: [CollisionArea.rectangle(size: bulletSize)]);
+    collisionConfig.collisionOnlyVisibleScreen = false;
 
     return _Bullet._byAngle(
       angle: angle,
@@ -75,8 +78,7 @@ class _Bullet extends FlyingAttackObject implements BulletInterface {
       animationDestroy: spriteSheetRegistry.boom.animation,
       destroySize: spriteSheetRegistry.boom.spriteSize,
       size: bulletSize,
-      collision: CollisionConfig(
-          collisions: [CollisionArea.rectangle(size: bulletSize)]),
+      collision: collisionConfig,
       lightingConfig: LightingConfig(
         radius: auraRadius / 2,
         blurBorder: auraRadius,

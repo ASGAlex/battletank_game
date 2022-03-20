@@ -25,6 +25,10 @@ class Player extends GameComponent
   late Future<SpriteAnimation> _animIdle;
   late Future<SpriteAnimation> _animRun;
 
+  int _treeCollisions = 0;
+
+  bool invisibleInTrees = false;
+
   @override
   bool dPadAngles = true;
 
@@ -77,6 +81,7 @@ class Player extends GameComponent
 
   @override
   void update(double dt) {
+    _treeCollisions = 0;
     _moveDirectional(innerCurrentDirectional!, speed);
     final newAngle = _getAngleByDirectional();
     if (innerCurrentDirectional != JoystickMoveDirectional.IDLE &&
@@ -153,9 +158,31 @@ class Player extends GameComponent
 
   @override
   bool onCollision(GameComponent component, bool active) {
+    if (component is Tree) {
+      _treeCollisions++;
+      if (_treeCollisions == 2) {
+        invisibleInTrees = true;
+      }
+      return false;
+    }
     if (component is _Bullet && component.firedFrom == this) return false;
 
     return super.onCollision(component, active);
+  }
+
+  @override
+  void onMove(
+    double speed,
+    Direction direction,
+    double angle,
+  ) {
+    if (_treeCollisions < 2) {
+      Future.delayed(const Duration(milliseconds: 700)).then((value) {
+        if (_treeCollisions < 2) {
+          invisibleInTrees = false;
+        }
+      });
+    }
   }
 
   @override
