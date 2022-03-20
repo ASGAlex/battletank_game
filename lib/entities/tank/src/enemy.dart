@@ -150,6 +150,7 @@ class Enemy extends RotationEnemy
     final allCollisions = gameRef.collisions();
     var collision = false;
     for (final i in allCollisions) {
+      if (i == this) continue;
       collision = checkCollision(i, displacement: targetPosition);
       if (collision) {
         break;
