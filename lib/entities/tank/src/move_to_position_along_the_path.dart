@@ -54,7 +54,6 @@ mixin _MoveToPositionAlongThePath on Movement, ObjectCollision {
       this.ignoreCollisions.addAll(ignoreCollisions);
     }
 
-    currentIndex = 0;
     var player = this;
     final positionPlayer = player.rectCollision.center.toVector2();
 
@@ -76,6 +75,35 @@ mixin _MoveToPositionAlongThePath on Movement, ObjectCollision {
         await PathfindingService().runTask(parameters).catchError((_) {
       _calculating = true;
     });
+
+    try {
+      var compareWithIndex = -1;
+      final currentTarget = currentPath[currentIndex].toVector2();
+      for (var index = 0; index < result.currentPath.length; index++) {
+        final plannedPos = result.currentPath[index].toVector2();
+        if (plannedPos.distanceTo(currentTarget) < 32) {
+          compareWithIndex = index;
+          break;
+        }
+      }
+
+      if (compareWithIndex > 0) {
+        final pointCompareWith =
+            result.currentPath[compareWithIndex].toVector2();
+        for (var index = 0; index < result.currentPath.length; index++) {
+          if (index >= compareWithIndex) {
+            break;
+          }
+          final plannedPos = result.currentPath[index].toVector2();
+          if (plannedPos.distanceTo(pointCompareWith) >
+              currentTarget.distanceTo(pointCompareWith)) {
+            result.currentPath.removeAt(index);
+            index--;
+            compareWithIndex--;
+          }
+        }
+      }
+    } catch (e) {}
     currentIndex = 0;
 
     currentPath = result.currentPath;

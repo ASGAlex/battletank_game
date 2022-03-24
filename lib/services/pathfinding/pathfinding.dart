@@ -200,10 +200,6 @@ class _PathfindingTask
           } else {
             _currentPath.add(tankPos.toOffset());
           }
-          // if (collide) break;
-        }
-        if (_currentPath.length > 1) {
-          _currentPath.removeAt(0);
         }
       }
     } catch (e) {

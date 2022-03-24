@@ -25,6 +25,7 @@ class Enemy extends RotationEnemy
   bool _updateScheduled = false;
 
   Vector2? _lastTargetPosition;
+  Vector2? _targetPositionOfPrevCalculation;
   bool _targetedMovement = false;
 
   Direction _fireDirection = Direction.up;
@@ -108,16 +109,22 @@ class Enemy extends RotationEnemy
       for (var element in myBullets) {
         ignoreCollisionsWith.add(element);
       }
-
-      await moveToPositionAlongThePath(targetPosition,
-          ignoreCollisions: ignoreCollisionsWith);
-      _targetedMovement = true;
       if (!_updateScheduled) {
-        Future.delayed(const Duration(milliseconds: 3000)).then((_) {
+        Future.delayed(const Duration(milliseconds: 1500)).then((_) {
           _updatePath = true;
           _updateScheduled = false;
         });
       }
+      if (_targetPositionOfPrevCalculation != null &&
+          ((_targetPositionOfPrevCalculation!.x - targetPosition.x).abs() < 8 ||
+              (_targetPositionOfPrevCalculation!.y - targetPosition.y).abs() <
+                  8)) {
+        return;
+      }
+      _targetPositionOfPrevCalculation = targetPosition.clone();
+      await moveToPositionAlongThePath(targetPosition,
+          ignoreCollisions: ignoreCollisionsWith);
+      _targetedMovement = true;
     }
     if (isIdle &&
         _lastTargetPosition != null &&
