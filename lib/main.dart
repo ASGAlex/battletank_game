@@ -2,7 +2,6 @@ import 'package:bonfire/bonfire.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
 import 'package:game/entities/environment/spawn.dart';
-import 'package:game/entities/tank/tank.dart' as tank;
 import 'package:game/services/game.dart';
 import 'package:game/services/spritesheet/spritesheet.dart';
 
@@ -28,13 +27,12 @@ class MainGame extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SpriteSheetRegistry(); //warm up entities
-    final player = tank.Player(position: Vector2(30 * 8, 16 * 8));
     return BonfireTiledWidget(
       customGameBuilder: TankGame.builder,
       gameController: _notificator..addListener(_controller),
       joystick: MyJoystick(),
       // required
-      map: TiledWorldMap('mapnew.json', tileBuilder: {
+      map: TiledWorldMap('classic.json', tileBuilder: {
         'brick': (props, position, offset) => Brick(
             sprite: props.sprite!.getSprite(),
             position: position,
@@ -46,9 +44,9 @@ class MainGame extends StatelessWidget {
             collisions: props.collisions),
       }, objectsBuilder: {
         'spawn': (props) => Spawn.withAnimation(position: props.position),
+        'spawn_player': (props) =>
+            Spawn.withAnimation(position: props.position, isForPlayer: true),
       }),
-      // required
-      player: player,
       // If player is omitted, the joystick directional will control the map view, being very useful in the process of building maps
       // interface: KnightInterface(),
       // decorations: <GameDecoration>[],
@@ -66,8 +64,8 @@ class MainGame extends StatelessWidget {
       lightingColorGame: Colors.black.withOpacity(0.4),
       // if you want to add general lighting for the game
       cameraConfig: CameraConfig(
-        target: player,
-        smoothCameraEnabled: true,
+        // target: player,
+        // smoothCameraEnabled: true,
         sizeMovementWindow: Vector2(16 * 10, 16 * 10),
         moveOnlyMapArea: true,
         zoom: 3,
@@ -76,15 +74,8 @@ class MainGame extends StatelessWidget {
       ),
       showFPS: true,
       onReady: (game) async {
-        game.camera.snapTo(Vector2(46 * 8, 46 * 8));
         _controller.init(game);
-        await _controller.addEnemy();
-        await _controller.addEnemy();
-        await _controller.addEnemy();
-        await _controller.addEnemy();
-        await _controller.addEnemy();
-        await _controller.addEnemy();
-        await _controller.addEnemy();
+        await _controller.restorePlayer();
         await _controller.addEnemy();
         await _controller.addEnemy();
         await _controller.addEnemy();

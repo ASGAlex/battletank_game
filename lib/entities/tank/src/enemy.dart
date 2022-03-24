@@ -1,7 +1,11 @@
 part of tank;
 
 class Enemy extends RotationEnemy
-    with _BaseTankMix, ObjectCollision, _MoveToPositionAlongThePath {
+    with
+        _BaseTankMix,
+        _DieExplosion,
+        ObjectCollision,
+        _MoveToPositionAlongThePath {
   Enemy({required Vector2 position})
       : super(
             position: position,
@@ -211,31 +215,9 @@ class Enemy extends RotationEnemy
 
   @override
   die() {
-    final boomBig = SpriteSheetRegistry().boomBig;
-    final animationDestroy = boomBig.animation;
-
-    final explosionSize = boomBig.spriteSize;
-    final positionDestroy =
-        center.translate(-explosionSize.x / 2, -explosionSize.y / 2);
-    gameRef.add(
-      AnimatedObjectOnce(
-        animation: animationDestroy,
-        position: positionDestroy,
-        lightingConfig: LightingConfig(
-          radius: boomBig.spriteSize.x / 2,
-          blurBorder: boomBig.spriteSize.x,
-          color: Colors.orange.withOpacity(0.3),
-        ),
-        size: boomBig.spriteSize,
-      ),
-    );
     Future.delayed(const Duration(milliseconds: 1500)).then((_) {
       MyGameController().addEnemy();
     });
-
-    if (!shouldRemove) {
-      removeFromParent();
-    }
     super.die();
   }
 }

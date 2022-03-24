@@ -7,6 +7,7 @@ class Player extends GameComponent
         ObjectCollision,
         Movement,
         Attackable,
+        _DieExplosion,
         MoveToPositionAlongThePath,
         JoystickListener
     implements bonfire.Player {
@@ -15,7 +16,7 @@ class Player extends GameComponent
     init(tankSheet);
     speed = 4 * 10;
     receivesAttackFrom = ReceivesAttackFromEnum.ENEMY;
-    initialLife(1000000000);
+    initialLife(1);
     this.position = position ?? Vector2(10 * 16, 10 * 16);
     size = tankSheet.spriteSize;
     _animIdle = tankSheet.animationIdle;
@@ -183,6 +184,14 @@ class Player extends GameComponent
     if (_treeCollisions == 2) {
       invisibleInTrees = true;
     }
+  }
+
+  @override
+  void die() {
+    Future.delayed(const Duration(milliseconds: 2000)).then((_) {
+      MyGameController().restorePlayer();
+    });
+    super.die();
   }
 
   @override

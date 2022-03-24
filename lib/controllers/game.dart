@@ -27,6 +27,17 @@ class MyGameController implements GameListener {
     return object;
   }
 
+  Future<tank.Player> restorePlayer() async {
+    var spawn = await Spawn.waitFree(true);
+    final object = tank.Player(position: spawn.position.clone());
+    await spawn.createTank(object, true);
+    game?.player = object;
+    game?.camera.target = object;
+    game?.joystick?.cleanObservers();
+    game?.joystick?.addObserver(object);
+    return object;
+  }
+
   void addGroundAsh(Vector2 position, Vector2 size) {
     final registry = SpriteSheetRegistry();
     final tile = Tile.fromFutureSprite(

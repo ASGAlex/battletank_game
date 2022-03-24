@@ -4,28 +4,32 @@ import 'package:game/services/spritesheet/spritesheet.dart';
 
 class Spawn extends GameDecoration {
   static final _instances = <Spawn>[];
+  static const spawnDurationSec = 3;
 
-  static Spawn? _getFree() {
+  static Spawn? _getFree([bool forPlayer = false]) {
     for (var spawn in _instances) {
-      if (!spawn.busy && spawn.notOverlappedByObjects()) {
+      if (!spawn.busy &&
+          spawn.isForPlayer == forPlayer &&
+          spawn.notOverlappedByObjects()) {
         return spawn;
       }
     }
     return null;
   }
 
-  static Future<Spawn> waitFree() {
-    var spawn = _getFree();
+  static Future<Spawn> waitFree([bool forPlayer = false]) {
+    var spawn = _getFree(forPlayer);
     if (spawn == null) {
-      return Future.delayed(const Duration(seconds: 3))
-          .then((value) => waitFree());
+      return Future.delayed(const Duration(seconds: spawnDurationSec))
+          .then((value) => waitFree(forPlayer));
     }
     return Future.value(spawn);
   }
 
   bool busy = false;
+  bool isForPlayer = false;
 
-  Spawn.withAnimation({required Vector2 position})
+  Spawn.withAnimation({required Vector2 position, this.isForPlayer = false})
       : super.withAnimation(
             animation: SpriteSheetRegistry().spawn.animation,
             position: position,
@@ -64,17 +68,21 @@ class Spawn extends GameDecoration {
     return true;
   }
 
-  void createTank(GameComponent object) {
+  Future createTank(GameComponent object, [bool isPlayer = false]) {
     busy = true;
     object.isVisible = false;
     animation?.reset();
-    Future.delayed(const Duration(seconds: 3)).then((value) {
+    return Future.delayed(const Duration(seconds: spawnDurationSec))
+        .then((value) {
       object.position = position.clone();
       object.isVisible = true;
+      // if (!isPlayer) {
       gameRef.add(object);
-      Future.delayed(const Duration(seconds: 3)).then((value) {
+      // }
+      Future.delayed(const Duration(seconds: spawnDurationSec)).then((value) {
         busy = false;
       });
+      return null;
     });
   }
 
