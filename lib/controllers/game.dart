@@ -1,6 +1,7 @@
 import 'package:bonfire/bonfire.dart';
 import 'package:game/entities/tank/tank.dart' as tank;
 
+import '../entities/environment/spawn.dart';
 import '../services/spritesheet/spritesheet.dart';
 
 class MyGameController implements GameListener {
@@ -19,10 +20,10 @@ class MyGameController implements GameListener {
     this.game = game;
   }
 
-  void addEnemy(Vector2 position) {
-    game?.add(tank.Enemy(
-      position: position,
-    ));
+  void addEnemy() async {
+    var spawn = await Spawn.waitFree();
+    final object = tank.Enemy(position: spawn.position.clone());
+    spawn.createTank(object);
   }
 
   void addGroundAsh(Vector2 position, Vector2 size) {

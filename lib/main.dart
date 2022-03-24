@@ -1,6 +1,7 @@
 import 'package:bonfire/bonfire.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
+import 'package:game/entities/environment/spawn.dart';
 import 'package:game/entities/tank/tank.dart' as tank;
 import 'package:game/services/game.dart';
 import 'package:game/services/spritesheet/spritesheet.dart';
@@ -43,6 +44,8 @@ class MainGame extends StatelessWidget {
             sprite: props.sprite!.getFutureSprite(),
             position: position,
             collisions: props.collisions),
+      }, objectsBuilder: {
+        'spawn': (props) => Spawn.withAnimation(position: props.position),
       }),
       // required
       player: player,
@@ -75,7 +78,10 @@ class MainGame extends StatelessWidget {
       onReady: (game) {
         game.camera.snapTo(Vector2(46 * 8, 46 * 8));
         _controller.init(game);
-        _controller.addEnemy(Vector2(46 * 8, 46 * 8));
+        _controller.addEnemy();
+        // _controller.addEnemy();
+        // _controller.addEnemy();
+        // _controller.addEnemy();
       },
       colorFilter: GameColorFilter(),
     );

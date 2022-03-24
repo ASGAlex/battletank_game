@@ -98,3 +98,20 @@ class _Ground extends _SpriteSheetBase {
   Future<Sprite> get ash =>
       getPrecompiledAnimation('ash').then((value) => value.frames.first.sprite);
 }
+
+class _Spawn extends _SpriteSheetBase {
+  _Spawn() : super() {
+    compileAnimation(
+      name: 'basic',
+      stepTime: 0.2,
+    );
+  }
+
+  @override
+  String get fileName => 'spritesheets/spawn.png';
+
+  @override
+  Vector2 get spriteSize => Vector2(15, 15);
+
+  Future<SpriteAnimation> get animation => getPrecompiledAnimation('basic');
+}

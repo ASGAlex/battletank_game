@@ -230,7 +230,7 @@ class Enemy extends RotationEnemy
       ),
     );
     Future.delayed(const Duration(milliseconds: 1500)).then((_) {
-      MyGameController().addEnemy(Vector2(46 * 8, 46 * 8));
+      MyGameController().addEnemy();
     });
 
     if (!shouldRemove) {
