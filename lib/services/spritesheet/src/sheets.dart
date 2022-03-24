@@ -101,12 +101,8 @@ class _Ground extends _SpriteSheetBase {
 
 class _Spawn extends _SpriteSheetBase {
   _Spawn() : super() {
-    compileAnimation(
-      name: 'basic',
-      stepTime: 0.2,
-    );
+    compileAnimation(name: 'basic', stepTime: 0.09, loop: false);
   }
-
   @override
   String get fileName => 'spritesheets/spawn.png';
 

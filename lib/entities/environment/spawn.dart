@@ -1,4 +1,5 @@
 import 'package:bonfire/bonfire.dart';
+import 'package:flutter/rendering.dart';
 import 'package:game/services/spritesheet/spritesheet.dart';
 
 class Spawn extends GameDecoration {
@@ -6,7 +7,7 @@ class Spawn extends GameDecoration {
 
   static Spawn? _getFree() {
     for (var spawn in _instances) {
-      if (!spawn.busy) {
+      if (!spawn.busy && spawn.notOverlappedByObjects()) {
         return spawn;
       }
     }
@@ -32,11 +33,41 @@ class Spawn extends GameDecoration {
     _instances.add(this);
   }
 
+  @override
+  Future<void> onLoad() async {
+    await super.onLoad();
+    if (loader == null) {
+      animation?.onComplete = reverseAnimation;
+    }
+  }
+
+  void reverseAnimation() {
+    animation = animation?.reversed();
+    animation?.onComplete = reverseAnimation;
+  }
+
+  bool notOverlappedByObjects() {
+    final enemies = gameRef.enemies();
+    final player = gameRef.player;
+
+    final objectsToCheck = <GameComponent>[...enemies];
+    if (player != null) {
+      objectsToCheck.add(player);
+    }
+
+    for (var obj in objectsToCheck) {
+      if (toRect().overlaps(obj.toRect())) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   void createTank(GameComponent object) {
     busy = true;
     object.isVisible = false;
     animation?.reset();
-    isVisible = true;
     Future.delayed(const Duration(seconds: 3)).then((value) {
       object.position = position.clone();
       object.isVisible = true;
@@ -44,7 +75,13 @@ class Spawn extends GameDecoration {
       Future.delayed(const Duration(seconds: 3)).then((value) {
         busy = false;
       });
-      isVisible = false;
     });
+  }
+
+  @override
+  void render(Canvas canvas) {
+    if (busy) {
+      super.render(canvas);
+    }
   }
 }

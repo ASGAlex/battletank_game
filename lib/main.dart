@@ -75,13 +75,20 @@ class MainGame extends StatelessWidget {
         // target: GameComponent(),
       ),
       showFPS: true,
-      onReady: (game) {
+      onReady: (game) async {
         game.camera.snapTo(Vector2(46 * 8, 46 * 8));
         _controller.init(game);
-        _controller.addEnemy();
-        // _controller.addEnemy();
-        // _controller.addEnemy();
-        // _controller.addEnemy();
+        await _controller.addEnemy();
+        await _controller.addEnemy();
+        await _controller.addEnemy();
+        await _controller.addEnemy();
+        await _controller.addEnemy();
+        await _controller.addEnemy();
+        await _controller.addEnemy();
+        await _controller.addEnemy();
+        await _controller.addEnemy();
+        await _controller.addEnemy();
+        await _controller.addEnemy();
       },
       colorFilter: GameColorFilter(),
     );

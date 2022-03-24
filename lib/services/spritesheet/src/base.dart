@@ -50,6 +50,7 @@ abstract class _SpriteSheetBase implements SpriteSheetPublicInterface {
 
   /// Call in animation getter to quickly create a new instance of "precompiled"
   /// animation
+  @override
   Future<SpriteAnimation> getPrecompiledAnimation(String name) async {
     await Future.wait(_awaitList);
     final template = _compiledAnimations[name];
