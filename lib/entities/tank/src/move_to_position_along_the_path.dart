@@ -10,7 +10,7 @@ mixin _MoveToPositionAlongThePath on Movement, ObjectCollision {
 
   bool _calculating = false;
 
-  Offset pathCorrection = Offset.zero;
+  Vector2? movementCorrection;
   List ignoreCollisions = [];
 
   var ignoreCollisionCheck = false;
@@ -42,7 +42,7 @@ mixin _MoveToPositionAlongThePath on Movement, ObjectCollision {
     _gridSizeIsCollisionSize = gridSizeIsCollisionSize;
   }
 
-  void moveToPositionAlongThePath(
+  Future moveToPositionAlongThePath(
     Vector2 targetPosition, {
     List? ignoreCollisions,
   }) async {
@@ -62,27 +62,37 @@ mixin _MoveToPositionAlongThePath on Movement, ObjectCollision {
         ignoreCollisions: this.ignoreCollisions,
         showBarriers: false,
         gridSizeIsCollisionSize: false,
-        finalPosition: targetPosition,
-        positionPlayer: positionPlayer,
+        finalPosition: //Vector2(246.5, 183.83328),
+            targetPosition,
+        positionPlayer: // Vector2(215.46681599999863, 359.0),
+            positionPlayer,
         gameSize:
             Vector2(gameRef.map.mapSize!.width, gameRef.map.mapSize!.height),
-        tileSize: _tileSize * 2,
+        tileSize: _tileSize,
         collisions: gameRef.map.getCollisions());
 
-    final result = await PathfindingService().runTask(parameters);
+    print('calc!');
+    final result =
+        await PathfindingService().runTask(parameters).catchError((_) {
+      _calculating = true;
+    });
     currentIndex = 0;
 
     currentPath = result.currentPath;
 
     _calculating = false;
+    print('finished');
 
-    gameRef.map.setLinePath(currentPath, _pathLineColor, _pathLineStrokeWidth);
+    gameRef.map.setLinePath(
+        <Offset>[/*positionPlayer.toOffset(),*/ ...currentPath],
+        _pathLineColor,
+        _pathLineStrokeWidth);
   }
 
   @override
   void update(double dt) {
     super.update(dt);
-    if (currentPath.isNotEmpty) {
+    if (movementCorrection == null && currentPath.isNotEmpty) {
       _move(dt);
     }
   }

@@ -24,8 +24,6 @@ class Enemy extends RotationEnemy
   bool _updatePath = true;
   bool _updateScheduled = false;
 
-  Vector2? _movementCorrection;
-
   Vector2? _lastTargetPosition;
   bool _targetedMovement = false;
 
@@ -35,9 +33,9 @@ class Enemy extends RotationEnemy
   void update(double dt) {
     super.update(dt);
 
-    if (_movementCorrection != null) {
-      position = _movementCorrection!;
-      _movementCorrection = null;
+    if (movementCorrection != null) {
+      position = movementCorrection!.clone();
+      movementCorrection = null;
     } else {
       seePlayer(
         notObserved: onPlayerNotObserved,
@@ -102,7 +100,7 @@ class Enemy extends RotationEnemy
     return lineOfVision?.overlaps(getRectAndCollision(gameRef.player)) ?? false;
   }
 
-  void _moveToTarget(Vector2 targetPosition, {var force = false}) {
+  void _moveToTarget(Vector2 targetPosition, {var force = false}) async {
     if (_updatePath || force) {
       _updatePath = false;
       final ignoreCollisionsWith = <ObjectCollision>[];
@@ -111,10 +109,11 @@ class Enemy extends RotationEnemy
         ignoreCollisionsWith.add(element);
       }
 
-      moveToPositionAlongThePath(targetPosition,
+      await moveToPositionAlongThePath(targetPosition,
           ignoreCollisions: ignoreCollisionsWith);
+      _targetedMovement = true;
       if (!_updateScheduled) {
-        Future.delayed(const Duration(milliseconds: 1500)).then((_) {
+        Future.delayed(const Duration(milliseconds: 3000)).then((_) {
           _updatePath = true;
           _updateScheduled = false;
         });
@@ -185,14 +184,20 @@ class Enemy extends RotationEnemy
   bool onCollision(GameComponent component, bool active) {
     if (component is TileWithCollision) {
       final vector = center - component.center;
-      const limit = 0.5;
+      final limit = 0.5; // component.rectCollision.width / 2;
       if (vector.x.abs() > limit) {
         vector.x = limit * (vector.x > 0 ? 1 : -1);
       }
       if (vector.y.abs() > limit) {
         vector.y = limit * (vector.y > 0 ? 1 : -1);
       }
-      _movementCorrection = position.translate(vector.x, vector.y);
+      movementCorrection = position.translate(vector.x, vector.y);
+      if (currentIndex < currentPath.length) {
+        var targetPoint = currentPath[currentIndex];
+        targetPoint = targetPoint.translate(vector.x, vector.y);
+        currentPath[currentIndex] = targetPoint;
+      }
+      return false;
     }
     return super.onCollision(component, active);
   }

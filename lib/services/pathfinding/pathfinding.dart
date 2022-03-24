@@ -157,8 +157,8 @@ class _PathfindingTask
 
     try {
       result = AStar(
-              rows: params.gameSize.x ~/ (params.tileSize) + 1,
-              columns: params.gameSize.y ~/ (params.tileSize) + 1,
+              rows: params.gameSize.x ~/ (params.tileSize),
+              columns: params.gameSize.y ~/ (params.tileSize),
               start: playerPosition,
               end: targetPosition,
               barriers: _barriers,
@@ -167,16 +167,62 @@ class _PathfindingTask
 
       if (result.isNotEmpty || _isNeighbor(playerPosition, targetPosition)) {
         result = AStar.resumePath(result);
-        _currentPath = result.map((e) {
-          final tileSize = params.tileSize;
-          return Offset(e.dx * tileSize, e.dy * tileSize)
-              .translate(tileSize / 2, tileSize / 2);
-        }).toList();
-        _currentPath.removeAt(0);
+        _currentPath.clear();
+        for (var index = 0; index < result.length; index++) {
+          final keypoint = result.elementAt(index);
+          var tankPos = Offset(
+                  keypoint.dx * params.tileSize, keypoint.dy * params.tileSize)
+              .translate(params.tileSize / 2, params.tileSize / 2)
+              .toVector2();
+
+          var collision = _checkCollisionAtPoint(tankPos);
+          var changeX = true;
+          int retries = 0;
+          while (collision != null) {
+            if (retries > 100) break;
+            final diff = tankPos - collision.rectCollision.center.toVector2();
+
+            double x = diff.x.abs() >= diff.y.abs() ? 1 * diff.x.sign : 0;
+            double y = diff.y.abs() >= diff.x.abs() ? 1 * diff.y.sign : 0;
+            // if (changeX && x != 0) {
+            //   y = 0;
+            // } else {
+            //   x = 0;
+            // }
+            changeX = !changeX;
+
+            tankPos = tankPos.translate(x, y);
+            collision = _checkCollisionAtPoint(tankPos);
+            retries++;
+          }
+          if (retries > 100) {
+            break;
+          } else {
+            _currentPath.add(tankPos.toOffset());
+          }
+          // if (collide) break;
+        }
+        if (_currentPath.length > 1) {
+          _currentPath.removeAt(0);
+        }
       }
     } catch (e) {
       print('ERROR(AStar):$e');
     }
+  }
+
+  RectCollisionInterface? _checkCollisionAtPoint(Vector2 tankPos) {
+    for (var collision in params.collisions) {
+      if (!params.ignoreCollisions.contains(collision)) {
+        final collide = collision.rectCollision.overlaps(Rect.fromPoints(
+            tankPos.toOffset().translate(-7, -7),
+            tankPos.toOffset().translate(8, 8)));
+        if (collide) {
+          return collision;
+        }
+      }
+    }
+    return null;
   }
 
   bool _isNeighbor(Offset playerPosition, Offset targetPosition) {
