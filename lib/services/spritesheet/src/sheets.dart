@@ -103,6 +103,7 @@ class _Spawn extends _SpriteSheetBase {
   _Spawn() : super() {
     compileAnimation(name: 'basic', stepTime: 0.09, loop: false);
   }
+
   @override
   String get fileName => 'spritesheets/spawn.png';
 
@@ -110,4 +111,23 @@ class _Spawn extends _SpriteSheetBase {
   Vector2 get spriteSize => Vector2(15, 15);
 
   Future<SpriteAnimation> get animation => getPrecompiledAnimation('basic');
+}
+
+class _Target extends _SpriteSheetBase {
+  _Target() : super() {
+    compileAnimation(name: 'life', stepTime: 1, from: 0, to: 1);
+    compileAnimation(name: 'dead', stepTime: 1, from: 1, to: 2);
+  }
+
+  @override
+  String get fileName => 'spritesheets/target.png';
+
+  @override
+  Vector2 get spriteSize => Vector2(16, 16);
+
+  Future<Sprite> get life => getPrecompiledAnimation('life')
+      .then((value) => value.frames.first.sprite);
+
+  Future<Sprite> get dead => getPrecompiledAnimation('dead')
+      .then((value) => value.frames.first.sprite);
 }

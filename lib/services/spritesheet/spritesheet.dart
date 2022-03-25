@@ -20,4 +20,5 @@ class SpriteSheetRegistry {
   final bullet = _Bullet();
   final ground = _Ground();
   final spawn = _Spawn();
+  final target = _Target();
 }

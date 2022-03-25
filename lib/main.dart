@@ -7,6 +7,7 @@ import 'package:game/services/spritesheet/spritesheet.dart';
 
 import 'controllers/game.dart';
 import 'entities/environment/brick.dart';
+import 'entities/environment/target.dart';
 import 'entities/environment/tree.dart';
 import 'ui/joystick.dart';
 
@@ -46,6 +47,8 @@ class MainGame extends StatelessWidget {
         'spawn': (props) => Spawn.withAnimation(position: props.position),
         'spawn_player': (props) =>
             Spawn.withAnimation(position: props.position, isForPlayer: true),
+        'target': (props) =>
+            Target.withSprite(position: props.position, size: props.size),
       }),
       // If player is omitted, the joystick directional will control the map view, being very useful in the process of building maps
       // interface: KnightInterface(),
@@ -76,7 +79,6 @@ class MainGame extends StatelessWidget {
       onReady: (game) async {
         _controller.init(game);
         await _controller.restorePlayer();
-        await _controller.addEnemy();
         await _controller.addEnemy();
         await _controller.addEnemy();
         await _controller.addEnemy();
