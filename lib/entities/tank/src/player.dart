@@ -7,7 +7,7 @@ class Player extends GameComponent
         ObjectCollision,
         Movement,
         Attackable,
-        _DieExplosion,
+        DieExplosion,
         MoveToPositionAlongThePath,
         JoystickListener
     implements bonfire.Player {

@@ -1,6 +1,6 @@
 part of tank;
 
-mixin _DieExplosion on Attackable {
+mixin DieExplosion on Attackable {
   @override
   die() {
     final boomBig = SpriteSheetRegistry().boomBig;

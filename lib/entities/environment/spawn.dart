@@ -4,7 +4,7 @@ import 'package:game/services/spritesheet/spritesheet.dart';
 
 class Spawn extends GameDecoration {
   static final _instances = <Spawn>[];
-  static const spawnDurationSec = 3;
+  static const spawnDurationSec = 2;
 
   static Spawn? _getFree([bool forPlayer = false]) {
     for (var spawn in _instances) {
@@ -35,6 +35,7 @@ class Spawn extends GameDecoration {
             position: position,
             size: Vector2.all(15)) {
     _instances.add(this);
+    belowComponents = true;
   }
 
   @override

@@ -3,7 +3,7 @@ part of tank;
 class Enemy extends RotationEnemy
     with
         _BaseTankMix,
-        _DieExplosion,
+        DieExplosion,
         ObjectCollision,
         _MoveToPositionAlongThePath {
   Enemy({required Vector2 position})
