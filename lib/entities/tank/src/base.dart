@@ -18,7 +18,6 @@ mixin _BaseTankMix on GameComponent implements _BaseTank {
           //required
           CollisionArea.rectangle(
             size: spriteSheet.spriteSize,
-            align: Vector2(1, 1),
           ),
         ],
       ),
