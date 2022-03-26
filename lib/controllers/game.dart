@@ -20,9 +20,9 @@ class MyGameController implements GameListener {
     this.game = game;
   }
 
-  Future<tank.Enemy> addEnemy() async {
+  Future<tank.Npc> addEnemy() async {
     var spawn = await Spawn.waitFree();
-    final object = tank.Enemy(position: spawn.position.clone());
+    final object = tank.Npc(position: spawn.position.clone());
     spawn.createTank(object);
     return object;
   }

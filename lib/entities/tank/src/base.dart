@@ -5,7 +5,7 @@ abstract class _BaseTank extends GameComponent with ObjectCollision {
 }
 
 mixin _BaseTankMix on GameComponent implements _BaseTank {
-  Duration fireInterval = const Duration(milliseconds: 500);
+  Duration fireInterval = const Duration(milliseconds: 1000);
   bool reloadingMainWeapon = false;
 
   final List<FlyingAttackObject> myBullets = [];

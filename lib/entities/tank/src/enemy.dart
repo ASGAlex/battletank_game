@@ -5,6 +5,7 @@ class Enemy extends RotationEnemy
         _BaseTankMix,
         DieExplosion,
         ObjectCollision,
+        _RandomMovement,
         _MoveToPositionAlongThePath {
   Enemy({required Vector2 position})
       : super(
@@ -19,7 +20,7 @@ class Enemy extends RotationEnemy
   }
 
   static const sizePx = 16.0;
-  static const visionRadius = sizePx * 100;
+  static const visionRadius = sizePx * 5;
   static const defaultSpeed = sizePx * 2;
 
   @override
@@ -54,7 +55,7 @@ class Enemy extends RotationEnemy
     if (_lastTargetPosition != null) {
       _moveToTarget(_lastTargetPosition!);
     } else {
-      _moveRandom();
+      randomMovement = true;
     }
   }
 
@@ -62,7 +63,7 @@ class Enemy extends RotationEnemy
     if (player is Player &&
         player.invisibleInTrees &&
         player.position.distanceTo(position) > sizePx * 3) {
-      _moveRandom();
+      randomMovement = true;
       return;
     }
 
@@ -106,6 +107,7 @@ class Enemy extends RotationEnemy
   }
 
   void _moveToTarget(Vector2 targetPosition, {var force = false}) async {
+    randomMovement = false;
     if (_updatePath || force) {
       _updatePath = false;
       final ignoreCollisionsWith = <ObjectCollision>[];
@@ -137,42 +139,42 @@ class Enemy extends RotationEnemy
     }
   }
 
-  void _moveRandom() {
-    if (!isIdle) return;
-    _targetedMovement = false;
-    var targetPosition = _getRandomTarget();
-    final mapSize = gameRef.map.mapSize;
-    if (mapSize == null) return;
-
-    if (targetPosition.x >= mapSize.width - sizePx) {
-      targetPosition.x = mapSize.width - sizePx * 2;
-    }
-    if (targetPosition.x <= 0 + sizePx) {
-      targetPosition.x = sizePx * 2;
-    }
-    if (targetPosition.y >= mapSize.height - sizePx) {
-      targetPosition.y = mapSize.height - sizePx * 2;
-    }
-    if (targetPosition.y <= 0 + sizePx) {
-      targetPosition.y = sizePx * 2;
-    }
-
-    final allCollisions = gameRef.collisions();
-    var collision = false;
-    for (final i in allCollisions) {
-      if (i == this) continue;
-      collision = checkCollision(i, displacement: targetPosition);
-      if (collision) {
-        break;
-      }
-    }
-    if (collision) {
-      _moveRandom();
-      return;
-    }
-
-    _moveToTarget(targetPosition);
-  }
+  // void _moveRandom() {
+  //   if (!isIdle) return;
+  //   _targetedMovement = false;
+  //   var targetPosition = _getRandomTarget();
+  //   final mapSize = gameRef.map.mapSize;
+  //   if (mapSize == null) return;
+  //
+  //   if (targetPosition.x >= mapSize.width - sizePx) {
+  //     targetPosition.x = mapSize.width - sizePx * 2;
+  //   }
+  //   if (targetPosition.x <= 0 + sizePx) {
+  //     targetPosition.x = sizePx * 2;
+  //   }
+  //   if (targetPosition.y >= mapSize.height - sizePx) {
+  //     targetPosition.y = mapSize.height - sizePx * 2;
+  //   }
+  //   if (targetPosition.y <= 0 + sizePx) {
+  //     targetPosition.y = sizePx * 2;
+  //   }
+  //
+  //   final allCollisions = gameRef.collisions();
+  //   var collision = false;
+  //   for (final i in allCollisions) {
+  //     if (i == this) continue;
+  //     collision = checkCollision(i, displacement: targetPosition);
+  //     if (collision) {
+  //       break;
+  //     }
+  //   }
+  //   if (collision) {
+  //     _moveRandom();
+  //     return;
+  //   }
+  //
+  //   _moveToTarget(targetPosition);
+  // }
 
   Vector2 _getRandomTarget() {
     final random = Random();
@@ -208,7 +210,7 @@ class Enemy extends RotationEnemy
         targetPoint = targetPoint.translate(vector.x, vector.y);
         currentPath[currentIndex] = targetPoint;
       }
-      return false;
+      // return false;
     }
     return super.onCollision(component, active);
   }
