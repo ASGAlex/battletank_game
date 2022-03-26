@@ -19,7 +19,7 @@ class Enemy extends RotationEnemy
   }
 
   static const sizePx = 16.0;
-  static const visionRadius = sizePx * 10;
+  static const visionRadius = sizePx * 100;
   static const defaultSpeed = sizePx * 2;
 
   @override

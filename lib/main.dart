@@ -90,8 +90,8 @@ class MainGame extends StatelessWidget {
         _controller.init(game);
         await _controller.restorePlayer();
         await _controller.addEnemy();
-        await _controller.addEnemy();
-        await _controller.addEnemy();
+        // await _controller.addEnemy();
+        // await _controller.addEnemy();
       },
       colorFilter: GameColorFilter(),
     );

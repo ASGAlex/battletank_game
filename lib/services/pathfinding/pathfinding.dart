@@ -157,8 +157,8 @@ class _PathfindingTask
 
     try {
       result = AStar(
-              rows: params.gameSize.x ~/ (params.tileSize),
-              columns: params.gameSize.y ~/ (params.tileSize),
+              columns: params.gameSize.x ~/ (params.tileSize),
+              rows: params.gameSize.y ~/ (params.tileSize),
               start: playerPosition,
               end: targetPosition,
               barriers: _barriers,
