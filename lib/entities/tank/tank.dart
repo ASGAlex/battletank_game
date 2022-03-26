@@ -17,3 +17,4 @@ part 'src/die_explosion_mix.dart';
 part 'src/enemy.dart';
 part 'src/move_to_position_along_the_path.dart';
 part 'src/player.dart';
+part 'src/random_movement.dart';
