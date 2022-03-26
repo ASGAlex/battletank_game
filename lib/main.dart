@@ -1,3 +1,4 @@
+import 'package:args/args.dart';
 import 'package:bonfire/bonfire.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
@@ -11,11 +12,18 @@ import 'entities/environment/target.dart';
 import 'entities/environment/tree.dart';
 import 'ui/joystick.dart';
 
-void main() async {
+void main(List<String> args) async {
+  var parser = ArgParser();
+  parser.addOption('map',
+      defaultsTo:
+          const String.fromEnvironment("map", defaultValue: 'classic.json'));
+  final results = parser.parse(args);
+  final map = results['map'];
+
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     title: 'RayWorld',
-    home: MainGame(),
+    home: MainGame(map),
   ));
 }
 
@@ -23,7 +31,9 @@ class MainGame extends StatelessWidget {
   final GameController _notificator = GameController();
   final MyGameController _controller = MyGameController();
 
-  MainGame({Key? key}) : super(key: key);
+  MainGame(this.map, {Key? key}) : super(key: key);
+
+  final String map;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +43,7 @@ class MainGame extends StatelessWidget {
       gameController: _notificator..addListener(_controller),
       joystick: MyJoystick(),
       // required
-      map: TiledWorldMap('classic.json', tileBuilder: {
+      map: TiledWorldMap(map, tileBuilder: {
         'brick': (props, position, offset) => Brick(
             sprite: props.sprite!.getSprite(),
             position: position,
