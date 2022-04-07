@@ -6,6 +6,7 @@ class Npc extends RotationEnemy
         DieExplosion,
         ObjectCollision,
         _RandomMovement,
+        _TargetedMovement,
         _RandomFire {
   Npc({required Vector2 position})
       : super(
@@ -29,12 +30,9 @@ class Npc extends RotationEnemy
   late final _defaultSpeed;
   late final _fireOptimalDistance;
 
-  Vector2? _lastKnownTargetPosition;
   Direction _fireDirection = Direction.up;
 
   Direction get fireDirection => _fireDirection;
-
-  bool get noTarget => _lastKnownTargetPosition == null;
 
   @override
   void update(double dt) {
@@ -43,23 +41,48 @@ class Npc extends RotationEnemy
     } else {
       animation = animRun;
     }
-    // попадает ли игрок в область обнаружения скрытых целей?
-    seePlayer(
-        radiusVision: _visionRevealRadius, observed: _onEnemyInRevealArea);
 
-    // если не нашли в ближней области видимости, тогда ищем на "линии зрения"
-    if (noTarget) {
-      _findEnemyOnLineSight();
+    /// продолжаем идти по маршруту, когда потеряли цель
+    if (noTarget && hasRoute) {
+      super.update(dt);
+      return;
     }
+
+    _targetInRevealArea1();
+
     if (noTarget) {
       randomMovement = true;
       randomFire = true;
-    } else {
-      /// строим маршрут движения и уничтожения цели
-      _onEnemyOnLineSight();
+    } else if (noRoute) {
+      _updateRoute();
     }
 
     super.update(dt);
+  }
+
+  _updateRoute() {
+    if (isDead) return;
+    updateRoute().then((hasRoute) {
+      if (hasRoute) {
+        randomMovement = false;
+        randomFire = false;
+      }
+      Future.delayed(const Duration(seconds: 1)).then((_) {
+        if (hasTarget) {
+          _updateRoute();
+        }
+      });
+    });
+  }
+
+  /// Цель есть в области ближнего обнаружения: любая цель в радиусе 360 градусов,
+  /// не важно, скрытая или нет.
+  /// Важно, что обновляет последнюю наблюдаемую позицию цели!!!
+  bool _targetInRevealArea1() {
+    // попадает ли игрок в область обнаружения скрытых целей?
+    seePlayer(
+        radiusVision: _visionRevealRadius, observed: _onEnemyInRevealArea);
+    return hasTarget;
   }
 
   bool _findEnemyOnLineSight() {
@@ -71,10 +94,7 @@ class Npc extends RotationEnemy
 
   /// противник в области видимости, в которой раскрываются даже скрытые цели.
   void _onEnemyInRevealArea(bonfire.Player player) {
-    //TODO: лучше вызывать. когда маршрут уже будет построен
-    randomMovement = false;
-    randomFire = false;
-    _lastKnownTargetPosition = player.position.clone();
+    lastKnownTargetPosition = player.position.clone();
   }
 
   bool _shouldFireTo(GameComponent target) {

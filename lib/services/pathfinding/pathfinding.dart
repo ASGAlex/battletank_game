@@ -34,8 +34,6 @@ class PathfindingService {
 class PathFindingParameters {
   const PathFindingParameters(
       {required this.ignoreCollisions,
-      required this.showBarriers,
-      required this.gridSizeIsCollisionSize,
       required this.tileSize,
       required this.gameSize,
       required this.positionPlayer,
@@ -44,8 +42,6 @@ class PathFindingParameters {
 
   factory PathFindingParameters.fromObjectCollision(
       {required List ignoreCollisions,
-      required bool showBarriers,
-      required bool gridSizeIsCollisionSize,
       required double tileSize,
       required Vector2 gameSize,
       required Vector2 positionPlayer,
@@ -64,8 +60,6 @@ class PathFindingParameters {
     }
     return PathFindingParameters(
         ignoreCollisions: ic,
-        showBarriers: showBarriers,
-        gridSizeIsCollisionSize: gridSizeIsCollisionSize,
         finalPosition: finalPosition,
         positionPlayer: positionPlayer,
         gameSize: gameSize,
@@ -74,8 +68,6 @@ class PathFindingParameters {
   }
 
   final List ignoreCollisions;
-  final bool showBarriers;
-  final bool gridSizeIsCollisionSize;
   final double tileSize;
   final Vector2 gameSize;
   final Vector2 positionPlayer;
@@ -116,18 +108,16 @@ class _PathfindingTask
   _PathfindingTask.getType()
       : params = PathFindingParameters(
             finalPosition: Vector2.zero(),
-            showBarriers: false,
             tileSize: 0,
             positionPlayer: Vector2.zero(),
-            gridSizeIsCollisionSize: false,
             gameSize: Vector2.zero(),
             collisions: [],
             ignoreCollisions: []);
 
-  static const REDUCTION_TO_AVOID_ROUNDING_PROBLEMS = 4;
+  static const reductionToAvoidRoundingProblems = 4;
 
   final PathFindingParameters params;
-  List<Offset> _currentPath = [];
+  final List<Offset> _currentPath = [];
   final List<Offset> _barriers = [];
 
   @override
@@ -244,14 +234,10 @@ class _PathfindingTask
     List.generate(countRows, (r) {
       List.generate(countColumns, (c) {
         grid.add(Rect.fromLTWH(
-          leftTop.dx +
-              (c * tileSize) +
-              REDUCTION_TO_AVOID_ROUNDING_PROBLEMS / 2,
-          leftTop.dy +
-              (r * tileSize) +
-              REDUCTION_TO_AVOID_ROUNDING_PROBLEMS / 2,
-          tileSize - REDUCTION_TO_AVOID_ROUNDING_PROBLEMS,
-          tileSize - REDUCTION_TO_AVOID_ROUNDING_PROBLEMS,
+          leftTop.dx + (c * tileSize) + reductionToAvoidRoundingProblems / 2,
+          leftTop.dy + (r * tileSize) + reductionToAvoidRoundingProblems / 2,
+          tileSize - reductionToAvoidRoundingProblems,
+          tileSize - reductionToAvoidRoundingProblems,
         ));
       });
     });

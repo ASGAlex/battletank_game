@@ -2,12 +2,14 @@ part of tank;
 
 abstract class _BaseTank extends GameComponent with ObjectCollision {
   AttackFromEnum get myRole;
+  List<FlyingAttackObject> get myBullets;
 }
 
 mixin _BaseTankMix on GameComponent implements _BaseTank {
   Duration fireInterval = const Duration(milliseconds: 1000);
   bool reloadingMainWeapon = false;
 
+  @override
   final List<FlyingAttackObject> myBullets = [];
 
   void init(SpriteSheetPublicInterface spriteSheet) {
