@@ -67,7 +67,7 @@ class Npc extends RotationEnemy
         randomMovement = false;
         randomFire = false;
       }
-      Future.delayed(const Duration(seconds: 1)).then((_) {
+      Future.delayed(const Duration(seconds: 2)).then((_) {
         if (hasTarget) {
           _updateRoute();
         }

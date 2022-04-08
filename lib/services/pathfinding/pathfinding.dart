@@ -1,3 +1,6 @@
+library pathfinding;
+
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:a_star_algorithm/a_star_algorithm.dart';
@@ -5,6 +8,8 @@ import 'package:async_task/async_task.dart';
 import 'package:async_task/async_task_extension.dart';
 import 'package:bonfire/bonfire.dart';
 import 'package:flutter/foundation.dart';
+
+part 'src/result.dart';
 
 List<AsyncTask> _taskTypeRegister() => [_PathfindingTask.getType()];
 
@@ -73,13 +78,6 @@ class PathFindingParameters {
   final Vector2 positionPlayer;
   final Vector2 finalPosition;
   final Iterable<RectCollisionInterface> collisions;
-}
-
-@immutable
-class PathFindingResult {
-  const PathFindingResult(this.currentPath);
-
-  final List<Offset> currentPath;
 }
 
 abstract class RectCollisionInterface {
@@ -201,7 +199,7 @@ class _PathfindingTask
     for (var collision in params.collisions) {
       if (!params.ignoreCollisions.contains(collision)) {
         final collide = collision.rectCollision.overlaps(Rect.fromPoints(
-            tankPos.toOffset().translate(-7, -7),
+            tankPos.toOffset().translate(-8, -8),
             tankPos.toOffset().translate(8, 8)));
         if (collide) {
           return collision;

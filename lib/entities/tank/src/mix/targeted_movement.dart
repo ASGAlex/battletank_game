@@ -45,7 +45,8 @@ mixin _TargetedMovement on _BaseTank, Movement, ObjectCollision {
         await PathfindingService().runTask(parameters).catchError((_) {
       _calculationInProgress = true;
     });
-    _currentPath = _removeRepeatingPoints(result);
+    result.cleanPath(_currentPath, _currentIndex, position.toOffset());
+    _currentPath = result.currentPath;
     _currentIndex = 0;
     _calculationInProgress = false;
     if (showLinePath) {
@@ -89,48 +90,6 @@ mixin _TargetedMovement on _BaseTank, Movement, ObjectCollision {
     throw ArgumentError('No tiles in map');
   }
 
-  /// Область, в пределах которой считаем, что новая точка маршрута повторяет
-  /// старую
-  double get _repeatingDetectionTreshold => _tileSize * 10;
-
-  /// Проверяем, если новые точки маршрута лежат там же, где и старые, то
-  /// удаляем их. Позволяет избежать бага, при котором танк возвращается назад
-  /// при обновлении маршрута во время движения.
-  List<Offset> _removeRepeatingPoints(PathFindingResult result) {
-    try {
-      var compareWithIndex = -1;
-      final currentTarget = _currentPath[_currentIndex].toVector2();
-      for (var index = 0; index < result.currentPath.length; index++) {
-        final plannedPos = result.currentPath[index].toVector2();
-        if (plannedPos.distanceTo(currentTarget) <
-            _repeatingDetectionTreshold) {
-          compareWithIndex = index;
-          break;
-        }
-      }
-
-      if (compareWithIndex > 0) {
-        final pointCompareWith =
-            result.currentPath[compareWithIndex].toVector2();
-        for (var index = 0; index < result.currentPath.length; index++) {
-          if (index >= compareWithIndex) {
-            break;
-          }
-          final plannedPos = result.currentPath[index].toVector2();
-          if (plannedPos.distanceTo(pointCompareWith) >
-              currentTarget.distanceTo(pointCompareWith)) {
-            result.currentPath.removeAt(index);
-            index--;
-            compareWithIndex--;
-          }
-        }
-      }
-      return result.currentPath;
-    } catch (e) {
-      return result.currentPath;
-    }
-  }
-
   @override
   void update(double dt) {
     super.update(dt);
@@ -141,6 +100,7 @@ mixin _TargetedMovement on _BaseTank, Movement, ObjectCollision {
 
   void _move(double dt) {
     double innerSpeed = speed * dt;
+    print('pos: $position , offset: $currentOffset');
 
     double diffX = currentOffset.dx - center.x;
     double diffY = currentOffset.dy - center.y;
@@ -152,13 +112,13 @@ mixin _TargetedMovement on _BaseTank, Movement, ObjectCollision {
     } else {
       bool onMove = false;
 
-      if (diffX.abs() > 0.01) {
+      if (diffX.abs() > 0.01 && diffX.abs() >= diffY.abs()) {
         if (diffX > 0) {
           onMove = moveRight(displacementX);
         } else if (diffX < 0) {
           onMove = moveLeft(displacementX);
         }
-      } else if (diffY.abs() > 0.01) {
+      } else if (diffY.abs() > 0.01 && diffY.abs() > diffX.abs()) {
         if (diffY > 0) {
           onMove = moveDown(displacementY);
         } else if (diffY < 0) {
@@ -183,6 +143,7 @@ mixin _TargetedMovement on _BaseTank, Movement, ObjectCollision {
       if (vector.y.abs() > limit) {
         vector.y = limit * (vector.y > 0 ? 1 : -1);
       }
+      print('tr: $vector');
       position = position.translate(vector.x, vector.y);
     }
     return super.onCollision(component, active);
