@@ -77,12 +77,19 @@ class Spawn extends GameDecoration {
         .then((value) {
       object.position = position.clone();
       object.isVisible = true;
-      // if (!isPlayer) {
-      gameRef.add(object);
-      // }
-      Future.delayed(const Duration(seconds: spawnDurationSec)).then((value) {
-        busy = false;
-      });
+      // ignore: prefer_function_declarations_over_variables
+      final createObject = () {
+        gameRef.add(object);
+        Future.delayed(const Duration(seconds: spawnDurationSec)).then((value) {
+          busy = false;
+        });
+      };
+      if (notOverlappedByObjects()) {
+        createObject();
+      } else {
+        Future.delayed(const Duration(seconds: spawnDurationSec ~/ 2))
+            .then((value) => createObject());
+      }
       return null;
     });
   }
