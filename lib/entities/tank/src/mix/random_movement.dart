@@ -6,9 +6,9 @@ mixin _RandomMovement on ObjectCollision, Movement, _Detection, _BaseTankMix {
   double movementDistance = 0;
   List<Direction> availableDirections = [];
 
-  double get movementMaxDistance => gameRef.map.tiles.first.width * 2 * 10;
+  double get movementMaxDistance => mySize * 10;
 
-  double get movementMinDistance => gameRef.map.tiles.first.width * 2 * 2;
+  double get movementMinDistance => mySize * 2;
 
   @override
   void update(double dt) {
