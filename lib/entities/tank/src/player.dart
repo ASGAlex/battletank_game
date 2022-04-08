@@ -14,9 +14,9 @@ class Player extends GameComponent
   Player({Vector2? position}) {
     final tankSheet = SpriteSheetRegistry().tankBasic;
     init(tankSheet);
-    speed = 4 * 10;
+    speed = mySize * 2;
     receivesAttackFrom = ReceivesAttackFromEnum.ENEMY;
-    initialLife(1);
+    initialLife(2);
     this.position = position ?? Vector2(10 * 16, 10 * 16);
     size = tankSheet.spriteSize;
     _animIdle = tankSheet.animationIdle;

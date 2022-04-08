@@ -12,6 +12,8 @@ mixin _BaseTankMix on GameComponent implements _BaseTank {
   @override
   final List<FlyingAttackObject> myBullets = [];
 
+  double get mySize => max(size.x, size.y);
+
   var _onWeaponReloaded = Future.value(null);
 
   void init(SpriteSheetPublicInterface spriteSheet) {

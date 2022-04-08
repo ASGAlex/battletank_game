@@ -17,17 +17,12 @@ class Npc extends RotationEnemy
             size: SpriteSheetRegistry().tankBasic.spriteSize,
             animIdle: SpriteSheetRegistry().tankBasic.animationIdle,
             animRun: SpriteSheetRegistry().tankBasic.animationRun) {
-    final tankBasic = SpriteSheetRegistry().tankBasic;
-    final mySize = max(tankBasic.spriteSize.x, tankBasic.spriteSize.y);
-    init(tankBasic);
+    init(SpriteSheetRegistry().tankBasic);
     initDetection(mySize);
     randomMovement = true;
     randomFire = true;
-    _defaultSpeed = mySize * 3;
-    speed = _defaultSpeed;
+    speed = mySize * 3;
   }
-
-  double _defaultSpeed = 0;
 
   @override
   void update(double dt) {
