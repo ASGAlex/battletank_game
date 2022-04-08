@@ -96,16 +96,26 @@ class _Bullet extends FlyingAttackObject implements BulletInterface {
     bool allowBullet = component.properties?['allowBullet'] == true;
     if (allowBullet) return false;
 
+    if (component is _Bullet) {
+      if (component.firedFrom is Npc && firedFrom is Npc) {
+        return false;
+      }
+    }
+
     if (component is Attackable && !component.shouldRemove) {
       if (attackFrom == AttackFromEnum.ENEMY) {
         if (component.receivesAttackFrom == ReceivesAttackFromEnum.ALL ||
             component.receivesAttackFrom == ReceivesAttackFromEnum.ENEMY) {
           component.receiveDamage(damage, id);
+        } else {
+          return false;
         }
       } else if (attackFrom == AttackFromEnum.PLAYER) {
         if (component.receivesAttackFrom == ReceivesAttackFromEnum.ALL ||
             component.receivesAttackFrom == ReceivesAttackFromEnum.PLAYER) {
           component.receiveDamage(damage, id);
+        } else {
+          return false;
         }
       }
     } else if (!withDecorationCollision) {
