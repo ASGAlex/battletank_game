@@ -15,7 +15,6 @@ import '../../ui/joystick.dart';
 
 part 'src/base.dart';
 part 'src/bullet.dart';
-part 'src/enemy.dart';
 part 'src/mix/die_explosion.dart';
 part 'src/mix/move_to_position_along_the_path.dart';
 part 'src/mix/random_fire.dart';

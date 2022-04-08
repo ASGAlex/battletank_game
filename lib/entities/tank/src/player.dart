@@ -48,7 +48,7 @@ class Player extends GameComponent
   void joystickAction(JoystickActionEvent event) {
     if (event.id == MyJoystickActions.attack ||
         event.id == MyJoystick.btnSpace) {
-      fire();
+      tryFire();
     }
   }
 

@@ -143,7 +143,7 @@ mixin _TargetedMovement on _BaseTank, Movement, ObjectCollision {
       if (vector.y.abs() > limit) {
         vector.y = limit * (vector.y > 0 ? 1 : -1);
       }
-      print('tr: $vector');
+      // print('tr: $vector');
       position = position.translate(vector.x, vector.y);
     }
     return super.onCollision(component, active);

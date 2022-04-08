@@ -4,15 +4,10 @@ mixin _RandomMovement on ObjectCollision, Movement {
   bool randomMovement = false;
   Direction _randomMoveDirection = Direction.up;
   double movementDistance = 0;
-  double _movementMaxDistance = 0;
 
-  double get movementMaxDistance {
-    if (_movementMaxDistance == 0) {
-      _movementMaxDistance = min(gameRef.map.mapSize?.width ?? 100,
-          gameRef.map.mapSize?.height ?? 100);
-    }
-    return _movementMaxDistance;
-  }
+  double get movementMaxDistance => gameRef.map.tiles.first.width * 2 * 10;
+
+  double get movementMinDistance => gameRef.map.tiles.first.width * 2 * 2;
 
   @override
   void update(double dt) {
@@ -45,20 +40,30 @@ mixin _RandomMovement on ObjectCollision, Movement {
         throw ArgumentError('Invalid direction');
     }
     if (!onMove || distanceFinished) {
-      _changeDirection();
+      changeRandomDirection();
     }
   }
 
   @override
   bool onCollision(GameComponent component, bool active) {
-    _changeDirection();
+    changeRandomDirection();
     return super.onCollision(component, active);
   }
 
-  _changeDirection() {
+  Direction changeRandomDirection([List<Direction>? availableDirection]) {
     final rnd = Random();
     _randomMoveDirection = _fromIndex(rnd.nextInt(4));
+    if (availableDirection != null) {
+      while (!availableDirection.contains(_randomMoveDirection)) {
+        _randomMoveDirection = _fromIndex(rnd.nextInt(4));
+      }
+    }
     movementDistance = rnd.nextInt(movementMaxDistance.toInt()).toDouble();
+    movementDistance = movementMaxDistance < movementMinDistance
+        ? movementMinDistance
+        : movementMaxDistance;
+
+    return _randomMoveDirection;
   }
 
   Direction _fromIndex(int index) {

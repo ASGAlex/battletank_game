@@ -21,7 +21,7 @@ class Npc extends RotationEnemy
     _sizePx = max(tankBasic.spriteSize.x, tankBasic.spriteSize.y);
     _visionRevealRadius = _sizePx * 5;
     _fireOptimalDistance = _sizePx * 10;
-    _defaultSpeed = _sizePx * 2;
+    _defaultSpeed = _sizePx * 3;
     speed = _defaultSpeed;
   }
 
@@ -31,6 +31,8 @@ class Npc extends RotationEnemy
   late final _fireOptimalDistance;
 
   Direction _fireDirection = Direction.up;
+
+  List<Direction> availableDirections = [];
 
   Direction get fireDirection => _fireDirection;
 
@@ -54,7 +56,7 @@ class Npc extends RotationEnemy
       randomMovement = true;
       randomFire = true;
     } else if (noRoute) {
-      _updateRoute();
+      // _updateRoute();
     }
 
     super.update(dt);
@@ -64,8 +66,8 @@ class Npc extends RotationEnemy
     if (isDead) return;
     updateRoute().then((hasRoute) {
       if (hasRoute) {
-        randomMovement = false;
-        randomFire = false;
+        // randomMovement = false;
+        // randomFire = false;
       }
       Future.delayed(const Duration(seconds: 2)).then((_) {
         if (hasTarget) {
@@ -135,6 +137,51 @@ class Npc extends RotationEnemy
     this.angle = angle;
     _fireDirection = direction;
     super.onMove(speed, direction, angle);
+    _checkNewDirections();
+  }
+
+  _checkNewDirections() {
+    if (speed <= 0) return;
+
+    final prevDirections = availableDirections.toList();
+
+    final checkDirections = {
+      Direction.left: position.translate(-_tileSize * 2, 0), //Left
+      Direction.right: position.translate(_tileSize * 2, 0), //Right
+      Direction.down: position.translate(0, _tileSize * 2), //Bottom
+      Direction.up: position.translate(0, -_tileSize * 2), //Top
+    };
+    availableDirections = checkDirections.keys.toList();
+
+    final allCollisions = gameRef.collisions();
+
+    for (final collisionObject in allCollisions) {
+      if (collisionObject == this) continue;
+
+      for (var pos in checkDirections.entries) {
+        if (checkCollision(collisionObject, displacement: pos.value)) {
+          availableDirections.remove(pos.key);
+        }
+      }
+    }
+
+    final newDirections = <Direction>[];
+    for (final direction in availableDirections) {
+      if (!prevDirections.contains(direction)) {
+        newDirections.add(direction);
+      }
+    }
+    newDirections.remove(_fireDirection.opposite);
+
+    if (randomMovement && newDirections.isNotEmpty) {
+      final rnd = Random();
+      if (rnd.nextDouble() < 0.7) {
+        print('change: $newDirections');
+        final newDirection = changeRandomDirection(newDirections);
+        _fireDirection = newDirection;
+        fireASAP();
+      }
+    }
   }
 
   @override
@@ -147,4 +194,24 @@ class Npc extends RotationEnemy
 
   @override
   AttackFromEnum get myRole => AttackFromEnum.ENEMY;
+}
+
+extension on Direction {
+  Direction get opposite {
+    switch (this) {
+      case Direction.left:
+        return Direction.right;
+      case Direction.right:
+        return Direction.left;
+      case Direction.up:
+        return Direction.down;
+      case Direction.down:
+        return Direction.up;
+      case Direction.upLeft:
+      case Direction.upRight:
+      case Direction.downLeft:
+      case Direction.downRight:
+        throw 'Unsupported direction';
+    }
+  }
 }

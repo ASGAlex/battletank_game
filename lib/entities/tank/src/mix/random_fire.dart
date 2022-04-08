@@ -24,7 +24,7 @@ mixin _RandomFire on _BaseTankMix {
       Duration nextInterval =
           Duration(milliseconds: rnd.nextInt(maxRandomInterval.inMilliseconds));
       Future.delayed(nextInterval).then((value) {
-        fire();
+        tryFire();
         _fireScheduled = false;
       });
     }

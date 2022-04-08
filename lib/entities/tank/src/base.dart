@@ -12,6 +12,8 @@ mixin _BaseTankMix on GameComponent implements _BaseTank {
   @override
   final List<FlyingAttackObject> myBullets = [];
 
+  var _onWeaponReloaded = Future.value(null);
+
   void init(SpriteSheetPublicInterface spriteSheet) {
     setupCollision(
       CollisionConfig(
@@ -26,8 +28,15 @@ mixin _BaseTankMix on GameComponent implements _BaseTank {
     );
   }
 
-  void fire() {
-    if (reloadingMainWeapon) return;
+  fireASAP() {
+    final success = tryFire();
+    if (!success) {
+      _onWeaponReloaded.then((value) => tryFire());
+    }
+  }
+
+  bool tryFire() {
+    if (reloadingMainWeapon) return false;
     reloadingMainWeapon = true;
     _Bullet? bullet;
     bullet = _Bullet(
@@ -43,8 +52,9 @@ mixin _BaseTankMix on GameComponent implements _BaseTank {
     gameRef.add(bullet);
     myBullets.add(bullet);
 
-    Future.delayed(fireInterval).then((_) {
+    _onWeaponReloaded = Future.delayed(fireInterval).then((_) {
       reloadingMainWeapon = false;
     });
+    return true;
   }
 }
