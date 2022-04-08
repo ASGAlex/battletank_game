@@ -42,6 +42,8 @@ class Player extends GameComponent
   @override
   JoystickMoveDirectional? get innerCurrentDirectional => currentDirectional;
 
+  var direction = Direction.right;
+
   SpriteAnimation? animation;
 
   @override
@@ -95,33 +97,45 @@ class Player extends GameComponent
   }
 
   void _moveDirectional(
-    JoystickMoveDirectional direction,
+    JoystickMoveDirectional joystickDirection,
     double speed,
   ) {
-    switch (direction) {
+    switch (joystickDirection) {
       case JoystickMoveDirectional.MOVE_UP:
         moveUp(speed);
+        direction = Direction.up;
         break;
       case JoystickMoveDirectional.MOVE_UP_LEFT:
         moveUp(speed);
+        direction = Direction.up;
         break;
       case JoystickMoveDirectional.MOVE_UP_RIGHT:
         moveUp(speed);
+        direction = Direction.up;
         break;
       case JoystickMoveDirectional.MOVE_RIGHT:
         moveRight(speed);
+        direction = Direction.right;
         break;
       case JoystickMoveDirectional.MOVE_DOWN:
         moveDown(speed);
+        direction = Direction.down;
+
         break;
       case JoystickMoveDirectional.MOVE_DOWN_RIGHT:
         moveDown(speed);
+        direction = Direction.down;
+
         break;
       case JoystickMoveDirectional.MOVE_DOWN_LEFT:
         moveDown(speed);
+        direction = Direction.down;
+
         break;
       case JoystickMoveDirectional.MOVE_LEFT:
         moveLeft(speed);
+        direction = Direction.left;
+
         break;
       case JoystickMoveDirectional.IDLE:
         if (!isIdle) {
