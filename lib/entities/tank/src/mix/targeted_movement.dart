@@ -1,6 +1,6 @@
 part of tank;
 
-mixin _TargetedMovement on _BaseTank, Movement, ObjectCollision {
+mixin _TargetedMovement on BaseTank, Movement, ObjectCollision {
   Vector2? _lastKnownTargetPosition;
   Vector2? _previousTargetPosition;
 

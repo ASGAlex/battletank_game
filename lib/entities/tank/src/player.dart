@@ -9,7 +9,8 @@ class Player extends GameComponent
         Attackable,
         DieExplosion,
         MoveToPositionAlongThePath,
-        JoystickListener
+        JoystickListener,
+        AmbientEnemy
     implements bonfire.Player {
   Player({Vector2? position}) {
     final tankSheet = SpriteSheetRegistry().tankBasic;

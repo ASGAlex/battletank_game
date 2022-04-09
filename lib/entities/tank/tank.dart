@@ -13,6 +13,7 @@ import 'package:game/services/sound/sound.dart';
 import 'package:game/services/spritesheet/spritesheet.dart';
 
 import '../../services/pathfinding/pathfinding.dart';
+import '../../services/sound/src/ambient_enemy.dart';
 import '../../tools.dart';
 import '../../ui/joystick.dart';
 

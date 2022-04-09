@@ -1,11 +1,14 @@
 part of tank;
 
-abstract class _BaseTank extends GameComponent with ObjectCollision {
+abstract class BaseTank extends GameComponent with ObjectCollision {
   AttackFromEnum get myRole;
+
   List<FlyingAttackObject> get myBullets;
+
+  double get mySize;
 }
 
-mixin _BaseTankMix on GameComponent implements _BaseTank {
+mixin _BaseTankMix on GameComponent implements BaseTank {
   Duration fireInterval = const Duration(milliseconds: 1000);
   bool reloadingMainWeapon = false;
 
