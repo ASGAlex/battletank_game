@@ -115,6 +115,10 @@ class _Bullet extends FlyingAttackObject implements BulletInterface {
       }
     }
 
+    if (component is Npc && firedFrom is Npc) {
+      return false;
+    }
+
     if (component is Attackable && !component.shouldRemove) {
       component.receiveDamage(attackFrom, damage, id);
     } else if (!withDecorationCollision) {
