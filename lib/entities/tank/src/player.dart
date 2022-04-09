@@ -46,13 +46,17 @@ class Player extends GameComponent
   var direction = Direction.right;
 
   SpriteAnimation? animation;
-  final audio = AudioPlayer();
 
   @override
   void joystickAction(JoystickActionEvent event) {
     if (event.id == MyJoystickActions.attack ||
         event.id == MyJoystick.btnSpace) {
-      tryFire();
+      final success = tryFire();
+      // try {
+      //   if (success) {
+      //     Sound().playerFireBullet.play();
+      //   }
+      // } catch (e) {}
     }
   }
 
@@ -142,13 +146,13 @@ class Player extends GameComponent
       case JoystickMoveDirectional.IDLE:
         if (!isIdle) {
           idle();
-          audio.pause();
+          Sound().movePlayer.pause();
         }
         break;
     }
 
     if (!isIdle) {
-      audio.play(AssetSource('move_player.mp3'));
+      Sound().movePlayer.play();
     }
   }
 

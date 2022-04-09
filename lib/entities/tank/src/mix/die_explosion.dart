@@ -21,6 +21,14 @@ mixin DieExplosion on Attackable {
         size: boomBig.spriteSize,
       ),
     );
+    // try {
+    //   if (this is Player || this is Target) {
+    //     Sound().explosionPlayer.play();
+    //   } else {
+    //     Sound().explosionEnemy.play();
+    //   }
+    // } catch (e) {}
+
     if (!shouldRemove) {
       removeFromParent();
     }

@@ -1,8 +1,8 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:bonfire/bonfire.dart';
 import 'package:bonfire/util/mixins/pointer_detector.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/widgets.dart';
+import 'package:game/services/sound/sound.dart';
 
 class TankGame extends BonfireGame with ScrollDetector, ScaleDetector {
   TankGame({
@@ -123,10 +123,17 @@ class TankGame extends BonfireGame with ScrollDetector, ScaleDetector {
 
   @override
   Future<void>? onLoad() async {
-    final player = AudioPlayer();
-    player.play(AssetSource('audio/music/intro.mp3'));
-    AudioCache.instance = AudioCache(prefix: 'assets/audio/sfx/');
-    AudioCache.instance.loadAll(['move_player.mp3', 'move.mp3']);
+    final sound = Sound();
+    sound.playMusic('intro.mp3');
+    final sfxList = [
+      Sfx('move_player.mp3'),
+      Sfx('move_enemies.mp3'),
+      Sfx('explosion_player.mp3'),
+      Sfx('explosion_enemy.mp3'),
+      Sfx('player_fire_bullet.mp3'),
+      Sfx('player_bullet_wall.mp3'),
+    ];
+    sound.init(sfxList);
     return super.onLoad();
   }
 }

@@ -3,15 +3,17 @@ library tank;
 import 'dart:math';
 
 import 'package:async_task/async_task_extension.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:bonfire/bonfire.dart' hide Player, Tile;
 import 'package:bonfire/bonfire.dart' as bonfire show Player, Tile;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:game/controllers/game.dart';
+import 'package:game/entities/environment/target.dart';
+import 'package:game/services/sound/sound.dart';
 import 'package:game/services/spritesheet/spritesheet.dart';
 
 import '../../services/pathfinding/pathfinding.dart';
+import '../../tools.dart';
 import '../../ui/joystick.dart';
 
 part 'src/base.dart';

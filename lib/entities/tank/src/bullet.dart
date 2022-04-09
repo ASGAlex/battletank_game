@@ -103,22 +103,7 @@ class _Bullet extends FlyingAttackObject implements BulletInterface {
     }
 
     if (component is Attackable && !component.shouldRemove) {
-      if (attackFrom == AttackFromEnum.ENEMY) {
-        if (component.receivesAttackFrom == ReceivesAttackFromEnum.ALL ||
-            component.receivesAttackFrom == ReceivesAttackFromEnum.ENEMY) {
-          component.receiveDamage(attackFrom, damage, id);
-        } else {
-          return false;
-        }
-      } else if (attackFrom == AttackFromEnum.PLAYER_OR_ALLY) {
-        if (component.receivesAttackFrom == ReceivesAttackFromEnum.ALL ||
-            component.receivesAttackFrom ==
-                ReceivesAttackFromEnum.PLAYER_AND_ALLY) {
-          component.receiveDamage(attackFrom, damage, id);
-        } else {
-          return false;
-        }
-      }
+      component.receiveDamage(attackFrom, damage, id);
     } else if (!withDecorationCollision) {
       return false;
     }
@@ -143,6 +128,15 @@ class _Bullet extends FlyingAttackObject implements BulletInterface {
             size: explosionSize,
           ),
         );
+
+        // try {
+        //   if (firedFrom is Player) {
+        //     Sound().movePlayer.pause();
+        //     Sound().playerBulletWall.play();
+        //   }
+        // } catch (e) {
+        //   print('sound error: $e');
+        // }
       }
     }
     setupCollision(CollisionConfig(collisions: []));
