@@ -3,7 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  audioplayers_windows
+  dart_vlc
 )
 
 set(PLUGIN_BUNDLED_LIBRARIES)

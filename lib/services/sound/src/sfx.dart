@@ -1,43 +1,49 @@
 part of sound;
 
 class Sfx {
-  Sfx(this.fileName) {
-    try {
-      audio.setPlayerMode(PlayerMode.lowLatency);
-    } catch (e) {
-      print('unsupported');
-    }
+  Sfx(this.fileName);
+
+  final String fileName;
+
+  PlayerController? _controller;
+
+  PlayerController? get controller => _controller;
+
+  load(String prefix) {
+    _controller = Player.asset(prefix + fileName);
   }
 
-  String prefrix = '';
-  final String fileName;
-  final audio = AudioPlayer();
-
   play() {
-    audio.pause();
-    audio.play(AssetSource(fileName));
+    _controller?.pause();
+    _controller?.play();
   }
 
   pause() {
-    audio.pause();
+    _controller?.pause();
   }
 }
 
-class SfxLong extends Sfx {
-  SfxLong(String fileName) : super(fileName);
+class SfxLongLoop extends Sfx {
+  SfxLongLoop(String fileName) : super(fileName);
 
   bool isPlaying = false;
 
   @override
+  load(String prefix) {
+    super.load(prefix);
+    controller?.loop = true;
+  }
+
+  @override
   play() async {
     if (isPlaying) return;
-    audio.play(AssetSource(prefrix + fileName));
+    controller?.play();
     isPlaying = true;
   }
 
   @override
   pause() {
-    audio.pause();
+    controller?.pause();
     isPlaying = false;
   }
 }
