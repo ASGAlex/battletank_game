@@ -106,14 +106,15 @@ class _Bullet extends FlyingAttackObject implements BulletInterface {
       if (attackFrom == AttackFromEnum.ENEMY) {
         if (component.receivesAttackFrom == ReceivesAttackFromEnum.ALL ||
             component.receivesAttackFrom == ReceivesAttackFromEnum.ENEMY) {
-          component.receiveDamage(damage, id);
+          component.receiveDamage(attackFrom, damage, id);
         } else {
           return false;
         }
-      } else if (attackFrom == AttackFromEnum.PLAYER) {
+      } else if (attackFrom == AttackFromEnum.PLAYER_OR_ALLY) {
         if (component.receivesAttackFrom == ReceivesAttackFromEnum.ALL ||
-            component.receivesAttackFrom == ReceivesAttackFromEnum.PLAYER) {
-          component.receiveDamage(damage, id);
+            component.receivesAttackFrom ==
+                ReceivesAttackFromEnum.PLAYER_AND_ALLY) {
+          component.receiveDamage(attackFrom, damage, id);
         } else {
           return false;
         }

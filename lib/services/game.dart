@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:bonfire/bonfire.dart';
 import 'package:bonfire/util/mixins/pointer_detector.dart';
 import 'package:flame/input.dart';
@@ -118,5 +119,14 @@ class TankGame extends BonfireGame with ScrollDetector, ScaleDetector {
     final currentScale = info.scale.global;
     camera.zoom = startZoom * currentScale.y;
     clampZoom();
+  }
+
+  @override
+  Future<void>? onLoad() async {
+    final player = AudioPlayer();
+    player.play(AssetSource('audio/music/intro.mp3'));
+    AudioCache.instance = AudioCache(prefix: 'assets/audio/sfx/');
+    AudioCache.instance.loadAll(['move_player.mp3', 'move.mp3']);
+    return super.onLoad();
   }
 }

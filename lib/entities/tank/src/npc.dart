@@ -22,7 +22,7 @@ class Npc extends RotationEnemy
     randomMovement = true;
     randomFire = true;
     speed = mySize * 3;
-    receivesAttackFrom = ReceivesAttackFromEnum.PLAYER;
+    receivesAttackFrom = ReceivesAttackFromEnum.PLAYER_AND_ALLY;
   }
 
   @override

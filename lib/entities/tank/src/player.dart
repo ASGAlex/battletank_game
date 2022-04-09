@@ -46,6 +46,7 @@ class Player extends GameComponent
   var direction = Direction.right;
 
   SpriteAnimation? animation;
+  final audio = AudioPlayer();
 
   @override
   void joystickAction(JoystickActionEvent event) {
@@ -141,8 +142,13 @@ class Player extends GameComponent
       case JoystickMoveDirectional.IDLE:
         if (!isIdle) {
           idle();
+          audio.pause();
         }
         break;
+    }
+
+    if (!isIdle) {
+      audio.play(AssetSource('move_player.mp3'));
     }
   }
 
@@ -210,7 +216,7 @@ class Player extends GameComponent
   }
 
   @override
-  AttackFromEnum get myRole => AttackFromEnum.PLAYER;
+  AttackFromEnum get myRole => AttackFromEnum.PLAYER_OR_ALLY;
 
   @override
   void moveTo(Vector2 position) {}

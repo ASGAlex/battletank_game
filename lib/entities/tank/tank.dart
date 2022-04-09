@@ -3,6 +3,7 @@ library tank;
 import 'dart:math';
 
 import 'package:async_task/async_task_extension.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:bonfire/bonfire.dart' hide Player, Tile;
 import 'package:bonfire/bonfire.dart' as bonfire show Player, Tile;
 import 'package:flutter/foundation.dart';
