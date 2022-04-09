@@ -70,6 +70,9 @@ flutter:
     - assets/
     - assets/images/
     - assets/images/spritesheets/
+    - assets/audio/
+    - assets/audio/sfx/
+    - assets/audio/music/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

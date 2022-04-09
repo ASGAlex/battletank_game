@@ -7,11 +7,7 @@ part 'src/sfx.dart';
 class Sound {
   static final Sound _instance = Sound._();
 
-  Sound._() {
-    AudioCache.instance = AudioCache(prefix: prefix);
-  }
-
-  final String prefix = 'assets/audio/sfx/';
+  Sound._();
 
   factory Sound() {
     return _instance;
@@ -26,14 +22,14 @@ class Sound {
     for (final sfx in preloadSfx) {
       final key = sfx.fileName.replaceAll('.mp3', '').replaceAll('/', '_');
       _sfx[key] = sfx;
-      sfxFiles.add(sfx.fileName);
+      sfx.prefrix = 'audio/sfx/';
+      sfxFiles.add(sfx.prefrix + sfx.fileName);
     }
     AudioCache.instance.loadAll(sfxFiles);
   }
 
   playMusic(String fileName) {
     final player = AudioPlayer();
-    player.audioCache.prefix = 'assets/audio/music/';
-    player.play(AssetSource(fileName));
+    player.play(AssetSource('audio/music/$fileName'));
   }
 }

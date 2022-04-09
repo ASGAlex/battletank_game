@@ -129,14 +129,10 @@ class _Bullet extends FlyingAttackObject implements BulletInterface {
           ),
         );
 
-        // try {
-        //   if (firedFrom is Player) {
-        //     Sound().movePlayer.pause();
-        //     Sound().playerBulletWall.play();
-        //   }
-        // } catch (e) {
-        //   print('sound error: $e');
-        // }
+        if (firedFrom is Player) {
+          Sound().movePlayer.pause();
+          Sound().playerBulletWall.play();
+        }
       }
     }
     setupCollision(CollisionConfig(collisions: []));

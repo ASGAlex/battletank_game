@@ -52,11 +52,9 @@ class Player extends GameComponent
     if (event.id == MyJoystickActions.attack ||
         event.id == MyJoystick.btnSpace) {
       final success = tryFire();
-      // try {
-      //   if (success) {
-      //     Sound().playerFireBullet.play();
-      //   }
-      // } catch (e) {}
+      if (success) {
+        Sound().playerFireBullet.play();
+      }
     }
   }
 
