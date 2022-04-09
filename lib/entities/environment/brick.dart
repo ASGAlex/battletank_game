@@ -91,5 +91,6 @@ class Brick extends TileWithCollision {
   _die() {
     if (shouldRemove) return;
     removeFromParent();
+    remove(this);
   }
 }
