@@ -14,6 +14,7 @@ class Player extends GameComponent
   Player({Vector2? position}) {
     final tankSheet = SpriteSheetRegistry().tankBasic;
     init(tankSheet);
+    initExplosion();
     size = tankSheet.spriteSize;
     speed = mySize * 2;
     receivesAttackFrom = ReceivesAttackFromEnum.ENEMY;
@@ -53,7 +54,8 @@ class Player extends GameComponent
         event.id == MyJoystick.btnSpace) {
       final success = tryFire();
       if (success) {
-        Sound().playerFireBullet.play();
+        final bullet = myBullets.last as BulletInterface;
+        bullet.createSound.play();
       }
     }
   }
@@ -149,7 +151,7 @@ class Player extends GameComponent
         break;
     }
 
-    if (!isIdle) {
+    if (!isIdle && !shouldRemove) {
       Sound().movePlayer.play();
     }
   }
@@ -211,10 +213,11 @@ class Player extends GameComponent
 
   @override
   void die() {
+    Sound().movePlayer.pause();
+    super.die();
     Future.delayed(const Duration(milliseconds: 2000)).then((_) {
       MyGameController().restorePlayer();
     });
-    super.die();
   }
 
   @override

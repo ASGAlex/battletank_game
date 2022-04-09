@@ -1,6 +1,16 @@
 part of tank;
 
 mixin DieExplosion on Attackable {
+  Sfx? dieSound;
+
+  initExplosion() {
+    if (this is Player || this is Target) {
+      dieSound = Sound().explosionPlayer;
+    } else {
+      dieSound = Sound().explosionEnemy;
+    }
+  }
+
   @override
   die() {
     final boomBig = SpriteSheetRegistry().boomBig;
@@ -21,11 +31,8 @@ mixin DieExplosion on Attackable {
         size: boomBig.spriteSize,
       ),
     );
-    if (this is Player || this is Target) {
-      Sound().explosionPlayer.play();
-    } else {
-      Sound().explosionEnemy.play();
-    }
+
+    dieSound?.play();
 
     if (!shouldRemove) {
       removeFromParent();

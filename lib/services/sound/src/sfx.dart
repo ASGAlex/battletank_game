@@ -1,9 +1,10 @@
 part of sound;
 
 class Sfx {
-  Sfx(this.fileName);
+  Sfx(this.fileName, [this.instances = 1]);
 
   final String fileName;
+  final int instances;
 
   PlayerController? _controller;
 
@@ -20,6 +21,11 @@ class Sfx {
 
   pause() {
     _controller?.pause();
+  }
+
+  dispose() {
+    _controller?.stop();
+    _controller?.dispose();
   }
 }
 

@@ -124,14 +124,14 @@ class TankGame extends BonfireGame with ScrollDetector, ScaleDetector {
   @override
   Future<void>? onLoad() async {
     final sound = Sound();
-    sound.playMusic('intro.mp3');
+    sound.playMusic('intro.ogg');
     final sfxList = [
-      SfxLongLoop('move_player.mp3'),
-      SfxLongLoop('move_enemies.mp3'),
-      Sfx('explosion_player.mp3'),
-      Sfx('explosion_enemy.mp3'),
-      Sfx('player_fire_bullet.mp3'),
-      Sfx('player_bullet_wall.mp3'),
+      () => SfxLongLoop('move_player.mp3'),
+      () => SfxLongLoop('move_enemies.mp3'),
+      () => Sfx('explosion_player.mp3', 2),
+      () => Sfx('explosion_enemy.mp3', 3),
+      () => Sfx('player_fire_bullet.ogg', 10),
+      () => Sfx('player_bullet_wall.ogg', 10),
     ];
     sound.init(sfxList);
     return super.onLoad();

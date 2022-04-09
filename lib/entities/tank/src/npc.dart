@@ -19,6 +19,7 @@ class Npc extends RotationEnemy
             animRun: SpriteSheetRegistry().tankBasic.animationRun) {
     init(SpriteSheetRegistry().tankBasic);
     initDetection(mySize);
+    initExplosion();
     randomMovement = true;
     randomFire = true;
     speed = mySize * 3;

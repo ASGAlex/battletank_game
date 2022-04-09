@@ -31,6 +31,7 @@ mixin _BaseTankMix on GameComponent implements _BaseTank {
   }
 
   fireASAP() {
+    if (shouldRemove) return false;
     final success = tryFire();
     if (!success) {
       _onWeaponReloaded.then((value) => tryFire());
@@ -38,6 +39,7 @@ mixin _BaseTankMix on GameComponent implements _BaseTank {
   }
 
   bool tryFire() {
+    if (shouldRemove) return false;
     if (reloadingMainWeapon) return false;
     reloadingMainWeapon = true;
     _Bullet? bullet;
@@ -51,12 +53,16 @@ mixin _BaseTankMix on GameComponent implements _BaseTank {
             myBullets.remove(bullet);
           }
         });
-    gameRef.add(bullet);
-    myBullets.add(bullet);
+    try {
+      gameRef.add(bullet);
+      myBullets.add(bullet);
 
-    _onWeaponReloaded = Future.delayed(fireInterval).then((_) {
-      reloadingMainWeapon = false;
-    });
+      _onWeaponReloaded = Future.delayed(fireInterval).then((_) {
+        reloadingMainWeapon = false;
+      });
+    } catch (_) {
+      return false;
+    }
     return true;
   }
 }

@@ -1,6 +1,12 @@
 part of tank;
 
-abstract class BulletInterface {}
+abstract class BulletInterface {
+  GameComponent get firedFrom;
+
+  Sfx get dieSound;
+
+  Sfx get createSound;
+}
 
 class _Bullet extends FlyingAttackObject implements BulletInterface {
   _Bullet._byAngle(
@@ -87,7 +93,14 @@ class _Bullet extends FlyingAttackObject implements BulletInterface {
     );
   }
 
+  @override
   final GameComponent firedFrom;
+
+  @override
+  final Sfx dieSound = Sound().playerBulletWall;
+
+  @override
+  final Sfx createSound = Sound().playerFireBullet;
 
   /// Fix error when fired bullet instantly destroys, collided with parent tank
   @override
@@ -130,8 +143,16 @@ class _Bullet extends FlyingAttackObject implements BulletInterface {
         );
 
         if (firedFrom is Player) {
-          Sound().movePlayer.pause();
-          Sound().playerBulletWall.play();
+          dieSound.play();
+        } else {
+          final player = gameRef.player;
+          if (player != null) {
+            player as Player;
+            seeComponent(player, radiusVision: player.mySize * 3,
+                observed: (player) {
+              dieSound.play();
+            });
+          }
         }
       }
     }
