@@ -213,6 +213,30 @@ class Player extends GameComponent
   }
 
   @override
+  void receiveDamage(
+    AttackFromEnum attacker,
+    double damage,
+    dynamic identify,
+  ) {
+    if (checkCanReceiveDamage(attacker, damage, identify)) {
+      try {
+        final game = gameRef;
+        gameRef.colorFilter?.animateTo(Colors.red,
+            blendMode: BlendMode.colorBurn,
+            duration: const Duration(milliseconds: 250), onFinish: () {
+          game.colorFilter?.config.color = null;
+        });
+      } catch (e) {}
+      if (life > 0) {
+        life -= damage;
+      }
+      if (life <= 0 && !isDead) {
+        die();
+      }
+    }
+  }
+
+  @override
   void die() {
     Sound().movePlayer.pause();
     super.die();
