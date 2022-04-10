@@ -8,6 +8,7 @@ import 'package:bonfire/bonfire.dart' as bonfire show Player, Tile;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:game/controllers/game.dart';
+import 'package:game/entities/environment/brick.dart';
 import 'package:game/entities/environment/target.dart';
 import 'package:game/services/sound/sound.dart';
 import 'package:game/services/spritesheet/spritesheet.dart';

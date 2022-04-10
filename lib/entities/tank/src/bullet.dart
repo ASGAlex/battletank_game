@@ -97,7 +97,7 @@ class _Bullet extends FlyingAttackObject implements BulletInterface {
   final GameComponent firedFrom;
 
   @override
-  final Sfx dieSound = Sound().playerBulletWall;
+  Sfx dieSound = Sound().playerBulletWall;
 
   @override
   final Sfx createSound = Sound().playerFireBullet;
@@ -109,21 +109,34 @@ class _Bullet extends FlyingAttackObject implements BulletInterface {
     bool allowBullet = component.properties?['allowBullet'] == true;
     if (allowBullet) return false;
 
+    dieSound = Sound().playerBulletWall;
     if (component is _Bullet) {
       if (component.firedFrom is Npc && firedFrom is Npc) {
         return false;
       }
+      dieSound = Sound().bulletStrongTank;
     }
 
-    if (component is Npc && firedFrom is Npc) {
-      return false;
+    if (component is Npc) {
+      if (firedFrom is Npc) {
+        return false;
+      }
+      dieSound = Sound().bulletStrongTank;
     }
 
     if (component is Attackable && !component.shouldRemove) {
+      dieSound = Sound().bulletStrongTank;
       component.receiveDamage(attackFrom, damage, id);
     } else if (!withDecorationCollision) {
       return false;
     }
+
+    if (component is Brick) {
+      dieSound = Sound().playerBulletWall;
+    } else if (component is TileWithCollision) {
+      dieSound = Sound().playerBulletStrongWall;
+    }
+
     _die();
     return true;
   }
@@ -147,7 +160,6 @@ class _Bullet extends FlyingAttackObject implements BulletInterface {
         );
 
         if (firedFrom is Player) {
-//          dieSound.controller?.volume = 1;
           dieSound.play();
         } else {
           final player = gameRef.player;
@@ -155,7 +167,6 @@ class _Bullet extends FlyingAttackObject implements BulletInterface {
             player as Player;
             seeComponent(player, radiusVision: player.mySize * 3,
                 observed: (player) {
-//              dieSound.controller?.volume = 1;
               dieSound.play();
             });
           }
