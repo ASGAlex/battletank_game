@@ -21,7 +21,7 @@ mixin AmbientEnemy on BaseTank {
           }
           final soundVolume = 1 - minDistance / radiusOfAmbient;
           final player = Sound().moveEnemies;
-          player.controller?.volume = soundVolume;
+          player.controller?.setVolume(soundVolume);
           player.play();
         },
         notObserved: () {

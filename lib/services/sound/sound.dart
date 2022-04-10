@@ -1,6 +1,6 @@
 library sound;
 
-import 'package:kplayer/kplayer.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 part 'src/sfx.dart';
 
@@ -22,7 +22,7 @@ class Sound {
   Sfx? createSfx(String name) {
     final sfx = _sfxBuilders[name]?.call();
     if (sfx != null) {
-      sfx.load('assets/audio/sfx/');
+      sfx.load('audio/sfx/');
     }
     return sfx;
   }
@@ -48,6 +48,7 @@ class Sound {
       final key = sfxTemp.fileName
           .replaceAll('.mp3', '')
           .replaceAll('.ogg', '')
+          .replaceAll('.m4a', '')
           .replaceAll('/', '_');
       _sfxBuilders[key] = sfx;
 
@@ -63,6 +64,6 @@ class Sound {
   }
 
   playMusic(String fileName) {
-    Player.asset("assets/audio/music/$fileName").play();
+    AudioPlayer().play(AssetSource("audio/music/$fileName"));
   }
 }

@@ -27,8 +27,8 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  kplayer:
-    path: ../kflutter/kplayer/kplayer
+  audioplayers: ^1.0.0-rc.1
+  audioplayers_windows: ^1.0.0-rc.1
   bonfire:
     # path: ../bonfire
     git: git@github.com:ASGAlex/bonfire.git

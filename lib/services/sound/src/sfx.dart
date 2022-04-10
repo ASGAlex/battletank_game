@@ -4,19 +4,33 @@ class Sfx {
   Sfx(this.fileName, [this.instances = 1]);
 
   final String fileName;
+  String _prefix = '';
+
+  String get fullPathToAsset => _prefix + fileName;
+
   final int instances;
 
-  PlayerController? _controller;
+  AudioPlayer? _controller;
 
-  PlayerController? get controller => _controller;
+  AudioPlayer? get controller => _controller;
+
+  AssetSource? _assetSource;
 
   load(String prefix) {
-    _controller = Player.asset(prefix + fileName);
+    _prefix = prefix;
+    final cache = AudioCache();
+    cache.load(fullPathToAsset);
+    _controller = AudioPlayer();
+    controller?.setReleaseMode(ReleaseMode.stop);
+    _assetSource = AssetSource(fullPathToAsset);
   }
 
   play() {
-    _controller?.pause();
-    _controller?.play();
+    final src = _assetSource;
+    if (src != null) {
+      _controller?.pause();
+      _controller?.play(src);
+    }
   }
 
   pause() {
@@ -37,13 +51,13 @@ class SfxLongLoop extends Sfx {
   @override
   load(String prefix) {
     super.load(prefix);
-    controller?.loop = true;
+    controller?.setReleaseMode(ReleaseMode.loop);
   }
 
   @override
   play() async {
     if (isPlaying) return;
-    controller?.play();
+    super.play();
     isPlaying = true;
   }
 

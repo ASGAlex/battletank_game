@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:game/entities/environment/spawn.dart';
 import 'package:game/services/game.dart';
 import 'package:game/services/spritesheet/spritesheet.dart';
-import 'package:kplayer/kplayer.dart' as kplayer;
 
 import 'controllers/game.dart';
 import 'entities/environment/brick.dart';
@@ -20,7 +19,6 @@ void main(List<String> args) async {
           const String.fromEnvironment("map", defaultValue: 'classic.json'));
   final results = parser.parse(args);
   final map = results['map'];
-  kplayer.Player.boot();
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     title: 'RayWorld',
