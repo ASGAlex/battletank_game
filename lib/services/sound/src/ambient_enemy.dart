@@ -8,7 +8,7 @@ mixin AmbientEnemy on BaseTank {
   void update(double dt) {
     super.update(dt);
 
-    final radiusOfAmbient = mySize * 10;
+    final radiusOfAmbient = mySize * 20;
     seeComponentType<Npc>(
         radiusVision: radiusOfAmbient,
         observed: (enemies) {

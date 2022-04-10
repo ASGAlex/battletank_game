@@ -147,6 +147,7 @@ class _Bullet extends FlyingAttackObject implements BulletInterface {
         );
 
         if (firedFrom is Player) {
+//          dieSound.controller?.volume = 1;
           dieSound.play();
         } else {
           final player = gameRef.player;
@@ -154,6 +155,7 @@ class _Bullet extends FlyingAttackObject implements BulletInterface {
             player as Player;
             seeComponent(player, radiusVision: player.mySize * 3,
                 observed: (player) {
+//              dieSound.controller?.volume = 1;
               dieSound.play();
             });
           }

@@ -56,6 +56,7 @@ class Player extends GameComponent
       final success = tryFire();
       if (success) {
         final bullet = myBullets.last as BulletInterface;
+        // bullet.createSound.controller?.volume = 1;
         bullet.createSound.play();
       }
     }
